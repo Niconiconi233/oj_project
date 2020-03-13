@@ -34,11 +34,9 @@ public class UserProfile {
 
     @Column(name = "ACM_PROBLEMS_STATUS")
     private String acm_problems_status = JsonUtils.objectToJson(new HashMap<String, VoProblems> ());
-    //private Map<Integer, VoProblems> acm_problems_status = new HashMap<>();
 
     @Column(name = "IO_PROBLEMS_STATUS")
     private String io_problems_status = JsonUtils.objectToJson(new HashMap<String, VoProblems> ());
-    //private Map<Integer, VoProblems> io_problems_status = new HashMap<>();
 
     @Column(name = "REAL_NAME")
     private String real_name;

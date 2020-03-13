@@ -5,15 +5,12 @@ import com.yw.ojproject.exception.ojExceptions;
 import com.yw.ojproject.utils.CookieUtils;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RedisUtils;
-import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -27,12 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 *
 * @author: YW
 *
-* @create: 2020-03-12 20:09
+* @create: 2020-03-13 19:24
 **/
-@Aspect
-@Component
-@Log4j2
-public class AdminAspect {
+public class SuperadminAspect {
     @Autowired
     RedisUtils redisUtils;
 
@@ -44,8 +38,8 @@ public class AdminAspect {
      * @param:[]
      * @return:void
      **/
-    @Pointcut(value = "@annotation(com.yw.ojproject.aop.AdminRequired)")
-    public void adminLog() {
+    @Pointcut(value = "@annotation(com.yw.ojproject.aop.SuperadminRequired)")
+    public void superadminLog() {
     }
 
     // 前置通知
@@ -72,10 +66,10 @@ public class AdminAspect {
 
         String ustr = (String)redisUtils.get(cookie.getValue());
         User user = JsonUtils.jsonStringToObject(ustr, User.class);
-        if(!user.isAdmin() || !user.isSuperAdmin())
+        if(!user.isSuperAdmin())
         {
-            logger.warn("非管理员或超级管理员");
-            throw new ojExceptions("003", "非管理员或超级管理员");
+            logger.warn("非超级管理员");
+            throw new ojExceptions("004", "非超级管理员");
         }
     }
 }

@@ -6,7 +6,7 @@ import com.yw.ojproject.entity.UserProfile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface UserProfileService extends BaseServer<UserProfile>  {
+public interface UserProfileServer extends BaseServer<UserProfile>  {
     /**
     * @Description: 增加提交数目
     * @Param: [userProfile]

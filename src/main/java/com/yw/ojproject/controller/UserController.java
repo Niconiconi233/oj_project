@@ -4,7 +4,7 @@ import com.google.code.kaptcha.Producer;
 import com.yw.ojproject.aop.LoginRequired;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.SessionDto;
-import com.yw.ojproject.service.UserService;
+import com.yw.ojproject.service.UserServer;
 import com.yw.ojproject.utils.CookieUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,7 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserServer userServer;
 
     @Autowired
     private Producer captchaProducer;
@@ -43,40 +43,40 @@ public class UserController {
     @PostMapping("/register")
     ReturnData userRegister(@RequestParam String username, @RequestParam String password, @RequestParam String email)
     {
-        return userService.userRegister(username, password, email);
+        return userServer.userRegister(username, password, email);
     }
 
     @PostMapping("/login")
     ReturnData userLogin(@RequestParam String username, @RequestParam String password, HttpServletResponse httpResponse)
     {
-        return userService.userLogin(username, password, httpResponse);
+        return userServer.userLogin(username, password, httpResponse);
     }
 
     @LoginRequired
     @GetMapping("/logout")
     ReturnData userLogout(HttpServletRequest httpServletRequest)
     {
-        return userService.userLogout(httpServletRequest);
+        return userServer.userLogout(httpServletRequest);
     }
 
     @PostMapping("/check_username_or_email")
     ReturnData checkUsernameOrEmail(@RequestParam(required = false, defaultValue = "") String email, @RequestParam(required = false, defaultValue = "") String username)
     {
-        return userService.checkUsernameOrEmail(email, username);
+        return userServer.checkUsernameOrEmail(email, username);
     }
 
     @LoginRequired
     @PostMapping("/change_email")
     ReturnData changeEmail(@RequestParam String password, @RequestParam String old_email, @RequestParam String new_email, HttpServletRequest httpServletRequest)
     {
-        return userService.changeEmail(password, old_email, new_email, httpServletRequest);
+        return userServer.changeEmail(password, old_email, new_email, httpServletRequest);
     }
 
     @LoginRequired
     @PostMapping("/change_password")
     ReturnData changePassword(@RequestParam String old_password, @RequestParam String new_password, HttpServletRequest httpServletRequest)
     {
-        return userService.changePassword(old_password, new_password, httpServletRequest);
+        return userServer.changePassword(old_password, new_password, httpServletRequest);
     }
 
     @LoginRequired

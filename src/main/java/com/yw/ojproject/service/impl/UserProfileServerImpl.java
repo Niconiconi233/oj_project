@@ -4,7 +4,7 @@ import com.yw.ojproject.dao.UserProfileDao;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.User;
 import com.yw.ojproject.entity.UserProfile;
-import com.yw.ojproject.service.UserProfileService;
+import com.yw.ojproject.service.UserProfileServer;
 import com.yw.ojproject.utils.CookieUtils;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RedisUtils;
@@ -26,14 +26,14 @@ import java.util.UUID;
 * @create: 2020-03-11 20:05
 **/
 @Service
-public class UserProfileServiceImpl extends BaseServerImpl<UserProfile> implements UserProfileService {
+public class UserProfileServerImpl extends BaseServerImpl<UserProfile> implements UserProfileServer {
 
     @Autowired
     RedisUtils redisUtils;
 
     private UserProfileDao userProfileDao;
 
-    public UserProfileServiceImpl(UserProfileDao userProfileDao)
+    public UserProfileServerImpl(UserProfileDao userProfileDao)
     {
         this.dao = userProfileDao;
         this.userProfileDao = userProfileDao;

@@ -3,7 +3,7 @@ package com.yw.ojproject.controller;
 import com.yw.ojproject.aop.LoginRequired;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.UserProfile;
-import com.yw.ojproject.service.UserProfileService;
+import com.yw.ojproject.service.UserProfileServer;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,9 +27,9 @@ import java.util.Map;
 @RequestMapping("/api")
 public class UserProfileController extends BaseController<UserProfile> {
 
-    private UserProfileService userProfileService;
+    private UserProfileServer userProfileService;
 
-    public UserProfileController(UserProfileService userProfileService)
+    public UserProfileController(UserProfileServer userProfileService)
     {
         this.baseService = userProfileService;
         this.userProfileService = userProfileService;

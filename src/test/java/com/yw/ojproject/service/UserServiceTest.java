@@ -10,11 +10,11 @@ import org.springframework.util.Assert;
 class UserServiceTest {
 
     @Autowired
-    UserService userService;
+    UserServer userServer;
 
     @Test
     void userRegister() {
-        ReturnData rd = userService.userRegister("root", "root", "root@qq.com");
+        ReturnData rd = userServer.userRegister("root", "root", "root@qq.com");
         Assert.state((((String)rd.getData()).compareTo("Succeed") != 0), "wrong");
     }
 
@@ -29,7 +29,7 @@ class UserServiceTest {
 
     @Test
     void checkUsernameOrEmail() {
-        ReturnData rd = userService.checkUsernameOrEmail("root@root.com", "");
+        ReturnData rd = userServer.checkUsernameOrEmail("root@root.com", "");
         Assert.state((((String)rd.getData()).compareTo("Succeed") != 0), "wrong");
     }
 

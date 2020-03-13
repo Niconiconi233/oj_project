@@ -5,7 +5,7 @@ import com.yw.ojproject.dto.ReturnData;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface UserService {
+public interface UserServer {
     /**
     * @Description: 注册接口
     * @Param: [username, email]

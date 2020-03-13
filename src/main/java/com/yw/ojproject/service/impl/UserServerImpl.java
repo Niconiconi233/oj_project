@@ -6,7 +6,7 @@ import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.UsernameEmailStatusDto;
 import com.yw.ojproject.entity.User;
 import com.yw.ojproject.entity.UserProfile;
-import com.yw.ojproject.service.UserService;
+import com.yw.ojproject.service.UserServer;
 import com.yw.ojproject.utils.CookieUtils;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RedisUtils;
@@ -28,7 +28,7 @@ import java.util.UUID;
 * @create: 2020-03-11 17:51
 **/
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServerImpl implements UserServer {
 
     @Autowired
     UserDao userDao;
