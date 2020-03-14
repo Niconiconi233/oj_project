@@ -1,6 +1,7 @@
 package com.yw.ojproject.service;
 
 import com.yw.ojproject.dto.ReturnData;
+import net.bytebuddy.asm.Advice;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,4 +33,13 @@ public interface AnnouncementServer {
     * @Date:
     */
     public ReturnData setAnnouncement(String title, String content, Boolean visible, HttpServletRequest httpServletRequest);
+    
+    /**
+    * @Description: 删除公告
+    * @Param: [id]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
+    public ReturnData delAnnouncement(String id);
 }

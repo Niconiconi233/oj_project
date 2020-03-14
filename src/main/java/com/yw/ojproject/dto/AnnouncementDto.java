@@ -22,11 +22,11 @@ public class AnnouncementDto {
     public AnnouncementDto(Announcement announcement)
     {
         this.id = announcement.getId();
-        this.created_by = new userimpl(announcement.getCreateby());
+        this.created_by = new userimpl(announcement.getCreate_by());
         this.title = announcement.getTitle();
         this.content = announcement.getContent();
-        this.create_time = announcement.getCreatetime();
-        this.last_update_time = announcement.getLastupdatetime();
+        this.create_time = announcement.getCreate_time();
+        this.last_update_time = announcement.getLast_update_time();
         this.visible = announcement.getVisible();
     }
 

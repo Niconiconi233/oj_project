@@ -14,7 +14,7 @@ import lombok.Setter;
 **/
 @Getter
 @Setter
-public class ColumnConditionBO {
+public class ColumnConditionBo {
     /**
      * 查询字段
      */
@@ -85,8 +85,8 @@ public class ColumnConditionBO {
          */
         not
     }
-    public static ColumnConditionBO parse(String s){
-        ColumnConditionBO columnConditionBO=new ColumnConditionBO();
+    public static ColumnConditionBo parse(String s){
+        ColumnConditionBo columnConditionBO=new ColumnConditionBo();
         String[] strings=s.split("_");
         columnConditionBO.setColumn(strings[0]);
         columnConditionBO.setCondition(Condition.valueOf(strings[1]));

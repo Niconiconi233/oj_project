@@ -1,7 +1,7 @@
 package com.yw.ojproject.entity;
 
 import com.yw.ojproject.utils.JsonUtils;
-import com.yw.ojproject.vo.VoProblems;
+import com.yw.ojproject.dto.VoProblems;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 

@@ -3,6 +3,7 @@ import	java.util.Date;
 
 import com.yw.ojproject.dao.AnnouncementDao;
 import com.yw.ojproject.dto.AnnouncementDto;
+import com.yw.ojproject.dto.AnnouncementListDto;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.Announcement;
 import com.yw.ojproject.entity.User;
@@ -46,7 +47,7 @@ public class AnnouncementServerImpl implements AnnouncementServer {
         {
             res.add(new AnnouncementDto(i));
         }
-        return new ReturnData("", res);
+        return new ReturnData(null, new AnnouncementListDto(res, res.size()));
     }
 
     @Override
@@ -58,11 +59,18 @@ public class AnnouncementServerImpl implements AnnouncementServer {
         Announcement announcement = new Announcement();
         announcement.setContent(content);
         announcement.setTitle(title);
-        announcement.setCreateby(u.getUsername());
-        announcement.setCreatetime(new Date());
-        announcement.setLastupdatetime(new Date());
+        announcement.setCreate_by(u.getUsername());
+        announcement.setCreate_time(new Date());
+        announcement.setLast_update_time(new Date());
         announcement.setVisible(visible);
         announcementDao.save(announcement);
-        return new ReturnData("", new AnnouncementDto(announcement));
+        return new ReturnData(null, new AnnouncementDto(announcement));
+    }
+
+    @Override
+    public ReturnData delAnnouncement(String id)
+    {
+        announcementDao.deleteById(id);
+        return new ReturnData(null, "Succeeded");
     }
 }

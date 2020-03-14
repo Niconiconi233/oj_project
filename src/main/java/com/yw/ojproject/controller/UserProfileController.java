@@ -2,8 +2,10 @@ package com.yw.ojproject.controller;
 
 import com.yw.ojproject.aop.LoginRequired;
 import com.yw.ojproject.dto.ReturnData;
+import com.yw.ojproject.dto.UserRankListDto;
 import com.yw.ojproject.entity.UserProfile;
 import com.yw.ojproject.service.UserProfileServer;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,7 +42,8 @@ public class UserProfileController extends BaseController<UserProfile> {
     {
         String type = pargrams.get("rule");
         Map<String, String> args = new HashMap<>();
-        args.put("page", pargrams.get("offset"));
+        String page = pargrams.get("offset").compareTo("0") == 0 ? "1" : pargrams.get("offset");
+        args.put("page", page);
         args.put("size", pargrams.get("limit"));
         if(type.compareTo("ACM") == 0)
         {
@@ -51,7 +54,8 @@ public class UserProfileController extends BaseController<UserProfile> {
             args.put("totalscore_ge", "0");
             args.put("sort", "totalscore,DESC");
         }
-        return new ReturnData("", findAllPageByParams(args));
+        Page<UserProfile> p = findAllPageByParams(args);
+        return new ReturnData(null, new UserRankListDto(p));
     }
 
     @LoginRequired

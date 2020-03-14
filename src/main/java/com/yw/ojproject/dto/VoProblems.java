@@ -1,4 +1,4 @@
-package com.yw.ojproject.vo;
+package com.yw.ojproject.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

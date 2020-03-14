@@ -33,13 +33,13 @@ public class Announcement {
     private String content;
 
     @Column(name = "CREATE_TIME")
-    private Date createtime;
+    private Date create_time;
 
     @Column(name = "CREATE_BY")
-    private String createby;
+    private String create_by;
 
     @Column(name = "LAST_UPDATE_TIME")
-    private Date lastupdatetime;
+    private Date last_update_time;
 
     @Column(name = "VISIBLE")
     private Boolean visible;

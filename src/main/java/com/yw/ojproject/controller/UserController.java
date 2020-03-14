@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @program: ojproject
@@ -41,42 +42,42 @@ public class UserController {
     private Producer captchaProducer;
 
     @PostMapping("/register")
-    ReturnData userRegister(@RequestParam String username, @RequestParam String password, @RequestParam String email)
+    ReturnData userRegister(@RequestBody Map<String, String> args)
     {
-        return userServer.userRegister(username, password, email);
+        return userServer.userRegister(args.get("username"), args.get("password"), args.get("email"));
     }
 
     @PostMapping("/login")
-    ReturnData userLogin(@RequestParam String username, @RequestParam String password, HttpServletResponse httpResponse)
+    ReturnData userLogin(@RequestBody Map<String, String> args, HttpServletResponse httpResponse)
     {
-        return userServer.userLogin(username, password, httpResponse);
+        return userServer.userLogin(args.get("username"), args.get("password"), httpResponse);
     }
 
     @LoginRequired
     @GetMapping("/logout")
-    ReturnData userLogout(HttpServletRequest httpServletRequest)
+    ReturnData userLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
     {
-        return userServer.userLogout(httpServletRequest);
+        return userServer.userLogout(httpServletRequest, httpServletResponse);
     }
 
     @PostMapping("/check_username_or_email")
-    ReturnData checkUsernameOrEmail(@RequestParam(required = false, defaultValue = "") String email, @RequestParam(required = false, defaultValue = "") String username)
+    ReturnData checkUsernameOrEmail(@RequestBody Map<String, String> args)
     {
-        return userServer.checkUsernameOrEmail(email, username);
+        return userServer.checkUsernameOrEmail(args.get("email"), args.get("username"));
     }
 
     @LoginRequired
     @PostMapping("/change_email")
-    ReturnData changeEmail(@RequestParam String password, @RequestParam String old_email, @RequestParam String new_email, HttpServletRequest httpServletRequest)
+    ReturnData changeEmail(@RequestBody Map<String, String> args, HttpServletRequest httpServletRequest)
     {
-        return userServer.changeEmail(password, old_email, new_email, httpServletRequest);
+        return userServer.changeEmail(args.get("password"), args.get("old_email"), args.get("new_email"), httpServletRequest);
     }
 
     @LoginRequired
     @PostMapping("/change_password")
-    ReturnData changePassword(@RequestParam String old_password, @RequestParam String new_password, HttpServletRequest httpServletRequest)
+    ReturnData changePassword(@RequestBody Map<String, String> args, HttpServletRequest httpServletRequest)
     {
-        return userServer.changePassword(old_password, new_password, httpServletRequest);
+        return userServer.changePassword(args.get("old_password"), args.get("new_password"), httpServletRequest);
     }
 
     @LoginRequired
@@ -92,7 +93,7 @@ public class UserController {
         s.setUser_agent(ua);
         List<SessionDto> l = new LinkedList<>();
         l.add(s);
-        return new ReturnData("", l);
+        return new ReturnData(null, l);
     }
 
     @GetMapping("/captcha")
@@ -107,7 +108,7 @@ public class UserController {
         String png_64 = encoder.encode(bytes).trim();
         png_64 = png_64.replace("\n", "").replace("\r", "");
         png_64 = "data:image/png;base64," + png_64;
-        return new ReturnData("", png_64);
+        return new ReturnData(null, png_64);
     }
 
 

@@ -31,7 +31,7 @@ public interface UserServer {
     * @Author: YW
     * @Date:
     */
-    public ReturnData userLogout(HttpServletRequest httpServletRequest);
+    public ReturnData userLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
 
     /**
     * @Description: 检查用户名邮箱

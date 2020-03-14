@@ -54,7 +54,7 @@ public class UserServerImpl implements UserServer {
         p.setUser(u);
         userDao.save(u);
         userProfileDao.save(p);
-        return new ReturnData("","Succeeded");
+        return new ReturnData(null,"Succeeded");
     }
 
     @Override
@@ -63,47 +63,49 @@ public class UserServerImpl implements UserServer {
         User u = userDao.findByUsernameAndPassword(username, password);
         if(u == null)
         {
-            return new ReturnData("Invaild username or password", "");
+            return new ReturnData("error", "Invaild username or password");
         }
         if(u.getId_disabled())
         {
-            return new ReturnData("Your account is been disabled", "");
+            return new ReturnData("error", "Your account is been disabled");
         }
         String uuid = UUID.randomUUID().toString().replace("-", "");
         String user_json = JsonUtils.objectToJson(u);
         redisUtils.set(uuid, user_json, 432000);
         CookieUtils.set(response, "csrftoken", uuid, 432000);
-        return new ReturnData("", "Succeeded");
+        return new ReturnData(null, "Succeeded");
     }
 
     @Override
-    public ReturnData userLogout(HttpServletRequest httpServletRequest)
+    public ReturnData userLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
     {
         Cookie cookie = CookieUtils.get(httpServletRequest, "csrftoken");
         redisUtils.del(cookie.getValue());
+        CookieUtils.set(httpServletResponse, "csrftoken", "", 0);
         cookie = CookieUtils.get(httpServletRequest, "_pid");
         redisUtils.del(cookie.getValue());
-        return new ReturnData("", "succeeded");
+        CookieUtils.set(httpServletResponse, "_pid", "", 0);
+        return new ReturnData(null, "succeeded");
     }
 
     @Override
     public ReturnData checkUsernameOrEmail(String email, String username)
     {
-        if(email.compareTo("") == 0)
+        if(email == null)
         {
             Integer count = userDao.countByUsername(username);
             if(count >= 1) {
-                return new ReturnData("", new UsernameEmailStatusDto(true, false));
+                return new ReturnData(null, new UsernameEmailStatusDto(true, false));
             }else {
-                return new ReturnData("", new UsernameEmailStatusDto(false, false));
+                return new ReturnData(null, new UsernameEmailStatusDto(false, false));
             }
         }else
         {
             Integer count = userDao.countByEmail(email);
             if(count >= 1) {
-                return new ReturnData("", new UsernameEmailStatusDto(false, true));
+                return new ReturnData(null, new UsernameEmailStatusDto(false, true));
             }else {
-                return new ReturnData("", new UsernameEmailStatusDto(false, false));
+                return new ReturnData(null, new UsernameEmailStatusDto(false, false));
             }
         }
     }
@@ -121,7 +123,7 @@ public class UserServerImpl implements UserServer {
         u.setEmail(new_email);
         userDao.save(u);
         redisUtils.set(cookie.getValue(), JsonUtils.objectToJson(u), 432000);
-        return new ReturnData("", "Succeeded");
+        return new ReturnData(null, "Succeeded");
     }
 
     @Override
@@ -137,6 +139,6 @@ public class UserServerImpl implements UserServer {
         u.setPassword(new_password);
         userDao.save(u);
         redisUtils.set(cookie.getValue(), JsonUtils.objectToJson(u), 432000);
-        return new ReturnData("", "Succeeded");
+        return new ReturnData(null, "Succeeded");
     }
 }

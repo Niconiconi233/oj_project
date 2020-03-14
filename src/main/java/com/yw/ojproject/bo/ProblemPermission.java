@@ -1,4 +1,4 @@
-package com.yw.ojproject.entity;
+package com.yw.ojproject.bo;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;

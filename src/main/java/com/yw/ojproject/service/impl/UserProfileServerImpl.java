@@ -67,7 +67,7 @@ public class UserProfileServerImpl extends BaseServerImpl<UserProfile> implement
         if(cookie != null)
         {
             String profile = (String)redisUtils.get(cookie.getValue());
-            return new ReturnData("", JsonUtils.jsonStringToObject(profile, UserProfile.class));
+            return new ReturnData(null, JsonUtils.jsonStringToObject(profile, UserProfile.class));
         }
         cookie = CookieUtils.get(httpServletRequest, "csrftoken");
         if(cookie != null)
@@ -78,9 +78,9 @@ public class UserProfileServerImpl extends BaseServerImpl<UserProfile> implement
             String _pid = UUID.randomUUID().toString().replace("-", "");
             CookieUtils.set(httpServletResponse, "_pid", _pid, 432000);
             redisUtils.set(_pid, JsonUtils.objectToJson(profile), 432000);
-            return new ReturnData("", profile);
+            return new ReturnData(null, profile);
         }
-        return new ReturnData("", "");
+        return new ReturnData(null, "");
     }
 
 }

@@ -1,5 +1,6 @@
 package com.yw.ojproject.controller;
 
+import com.yw.ojproject.aop.LoginRequired;
 import com.yw.ojproject.aop.SuperadminRequired;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.service.AnnouncementServer;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
 * @program: ojproject
@@ -32,9 +34,17 @@ public class AnnouncementController {
 
     @SuperadminRequired
     @PostMapping("/announcement")
-    ReturnData setAnnouncement(@RequestParam String title, @RequestParam String content, @RequestParam Boolean visible, HttpServletRequest httpServletRequest)
+    ReturnData setAnnouncement(@RequestBody Map<String, String> args, HttpServletRequest httpServletRequest)
     {
-        return announcementServer.setAnnouncement(title, content, visible, httpServletRequest);
+        Boolean visible = args.get("visible").compareTo("true") == 0 ? true : false;
+        return announcementServer.setAnnouncement(args.get("title"), args.get("content"), visible, httpServletRequest);
+    }
+
+    @SuperadminRequired
+    @DeleteMapping("/announcement")
+    ReturnData delAnnouncement(@RequestParam String id)
+    {
+        return announcementServer.delAnnouncement(id);
     }
 
 }

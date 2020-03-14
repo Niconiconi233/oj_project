@@ -1,7 +1,7 @@
 package com.yw.ojproject.service.impl;
 
 import com.yw.ojproject.bo.ClassTypeBo;
-import com.yw.ojproject.bo.ColumnConditionBO;
+import com.yw.ojproject.bo.ColumnConditionBo;
 import com.yw.ojproject.service.BaseServer;
 import com.yw.ojproject.utils.ClassHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -181,7 +181,7 @@ public class BaseServerImpl<T> implements BaseServer<T> {
         List<Predicate> predicateList = new ArrayList<>();
         map.forEach((k, v) -> {
             try {
-                ColumnConditionBO columnConditionBO = ColumnConditionBO.parse(k);
+                ColumnConditionBo columnConditionBO = ColumnConditionBo.parse(k);
                 Predicate predicate=this.getPredicate(columnConditionBO, v, cb, root);
                 if(predicate==null){
                     log.warn(k+"查询条件错误");
@@ -205,7 +205,7 @@ public class BaseServerImpl<T> implements BaseServer<T> {
      * @param root              root
      * @return 查询条件
      */
-    private Predicate getPredicate(ColumnConditionBO columnConditionBO, String value, CriteriaBuilder criteriaBuilder, Root<T> root) throws NoSuchFieldException {
+    private Predicate getPredicate(ColumnConditionBo columnConditionBO, String value, CriteriaBuilder criteriaBuilder, Root<T> root) throws NoSuchFieldException {
         //获取查询字段的类型，fieldClass为查询类中字段的类型，classType为根据类型定义的枚举类
         clazz = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         while (clazz!=null){
@@ -239,7 +239,7 @@ public class BaseServerImpl<T> implements BaseServer<T> {
      * @param fieldClass        fieldClass
      * @return predicate
      */
-    private Predicate basicPredicate(ColumnConditionBO columnConditionBO, String value, CriteriaBuilder criteriaBuilder, Root<T> root, Class fieldClass) {
+    private Predicate basicPredicate(ColumnConditionBo columnConditionBO, String value, CriteriaBuilder criteriaBuilder, Root<T> root, Class fieldClass) {
         ClassTypeBo classType = ClassTypeBo.valueOf(fieldClass.getSimpleName());
         switch (columnConditionBO.getCondition()) {
             case lk: {
@@ -379,7 +379,7 @@ public class BaseServerImpl<T> implements BaseServer<T> {
      * @param ys                ys
      * @return predicate
      */
-    private <Y> Predicate enumPredicate(ColumnConditionBO columnConditionBO, String value, CriteriaBuilder criteriaBuilder, Root<T> root, Y[] ys) {
+    private <Y> Predicate enumPredicate(ColumnConditionBo columnConditionBO, String value, CriteriaBuilder criteriaBuilder, Root<T> root, Y[] ys) {
         //枚举类型处理
         CriteriaBuilder.In<Y> in = criteriaBuilder.in(root.get(columnConditionBO.getColumn()));
         Arrays.asList(value.split(",")).forEach(s -> Arrays.asList(ys).forEach(f -> {

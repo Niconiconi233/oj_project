@@ -1,6 +1,8 @@
 package com.yw.ojproject.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yw.ojproject.bo.AdminType;
+import com.yw.ojproject.bo.ProblemPermission;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 

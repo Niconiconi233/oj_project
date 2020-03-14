@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
 * @program: ojproject
 *
@@ -11,12 +13,12 @@ import lombok.NoArgsConstructor;
 *
 * @author: YW
 *
-* @create: 2020-03-11 22:14
+* @create: 2020-03-14 14:41
 **/
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ReturnData {
-    private Object error;
-    private Object data;
+@AllArgsConstructor
+public class AnnouncementListDto {
+    private List<AnnouncementDto> results;
+    private Integer total;
 }
