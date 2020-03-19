@@ -2,6 +2,7 @@ package com.yw.ojproject.service.impl;
 
 import com.yw.ojproject.dao.UserProfileDao;
 import com.yw.ojproject.dto.ReturnData;
+import com.yw.ojproject.dto.UserProfileDto;
 import com.yw.ojproject.entity.User;
 import com.yw.ojproject.entity.UserProfile;
 import com.yw.ojproject.service.UserProfileServer;
@@ -67,7 +68,7 @@ public class UserProfileServerImpl extends BaseServerImpl<UserProfile> implement
         if(cookie != null)
         {
             String profile = (String)redisUtils.get(cookie.getValue());
-            return new ReturnData(null, JsonUtils.jsonStringToObject(profile, UserProfile.class));
+            return new ReturnData(null, new UserProfileDto(JsonUtils.jsonStringToObject(profile, UserProfile.class)));
         }
         cookie = CookieUtils.get(httpServletRequest, "csrftoken");
         if(cookie != null)
@@ -78,9 +79,9 @@ public class UserProfileServerImpl extends BaseServerImpl<UserProfile> implement
             String _pid = UUID.randomUUID().toString().replace("-", "");
             CookieUtils.set(httpServletResponse, "_pid", _pid, 432000);
             redisUtils.set(_pid, JsonUtils.objectToJson(profile), 432000);
-            return new ReturnData(null, profile);
+            return new ReturnData(null, new UserProfileDto(profile));
         }
-        return new ReturnData(null, "");
+        return new ReturnData("error", "system error");
     }
 
 }

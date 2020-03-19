@@ -17,16 +17,16 @@ import java.util.HashMap;
 *
 * @create: 2020-03-11 18:13
 **/
+@Data
 @Entity
 @Table(name = "UserProfile")
-@Data
 public class UserProfile {
 
     @Id
-    @GeneratedValue(generator = "guidGenerator")
-    @GenericGenerator(name = "guidGenerator", strategy ="uuid")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GenericGenerator(name = "guidGenerator", strategy ="uuid")
     @Column(name = "ID", unique = true, nullable = true, length = 32)
-    private String id;
+    private Integer id;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_ID", referencedColumnName = "ID")

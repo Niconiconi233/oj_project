@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-public interface ProblemDao extends JpaSpecificationExecutor<Problem>, JpaRepository<Problem, String> {
+public interface ProblemDao extends JpaSpecificationExecutor<Problem>, JpaRepository<Problem, Integer> {
     /**
     * @Description: 随机一题
     * @Param: []
@@ -14,5 +14,14 @@ public interface ProblemDao extends JpaSpecificationExecutor<Problem>, JpaReposi
     * @Author: YW
     * @Date: 
     */
-    List<Problem> findByVisibleTrue();
+    List<Problem> findByVisible(Integer visible);
+    
+    /**
+    * @Description: 通过id查找
+    * @Param: [id]
+    * @return: com.yw.ojproject.entity.Problem
+    * @Author: YW
+    * @Date: 
+    */
+    Problem findByIdAndVisible(Integer id, Integer visible);
 }

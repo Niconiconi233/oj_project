@@ -59,7 +59,7 @@ public class JsonUtils {
     /**
      * json转换成对象列表List<T>
      */
-    public static <T> List<T> jsonStringToList(String json,Class<T> obj){
+    public static <T> List<T> jsonStringToList(String json, Class obj){
         try{
             return JSONArray.parseArray(json, obj);
         }catch(Exception e){

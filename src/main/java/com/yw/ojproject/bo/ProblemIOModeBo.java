@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ProblemIOModeBo {
-    private ProblemIOMode io_mode = ProblemIOMode.standard;
+    private String io_mode = ProblemIOMode.standard.getDesc();
     private String input = "input.txt";
     private String output = "output.txt";
 

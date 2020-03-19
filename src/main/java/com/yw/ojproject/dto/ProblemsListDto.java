@@ -1,6 +1,6 @@
 package com.yw.ojproject.dto;
 
-import com.yw.ojproject.entity.UserProfile;
+import com.yw.ojproject.entity.Problem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,21 +16,21 @@ import java.util.List;
 *
 * @author: YW
 *
-* @create: 2020-03-14 15:25
+* @create: 2020-03-18 20:24
 **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRankListDto {
-    public UserRankListDto(Page<UserProfile> p)
+public class ProblemsListDto {
+    public ProblemsListDto(Page<Problem> p)
     {
-        results = new LinkedList<>();
-        for(UserProfile tmp : p)
+        result = new LinkedList<>();
+        for(Problem tmp : p.getContent())
         {
-            results.add(new UserRankDto(tmp));
+            result.add(new ProblemsDto(tmp));
         }
         total = p.getTotalElements();
     }
-    private List<UserRankDto> results;
+    private List<ProblemsDto> result;
     private Long total;
 }

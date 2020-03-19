@@ -30,7 +30,7 @@ public class BaseController<T> {
      * @param parameters
      * @return
      */
-    @GetMapping("/findAllPageByParams")
+    //@GetMapping("/findAllPageByParams")
     public Page<T> findAllPageByParams(@RequestParam Map<String, String> parameters) {
         return baseService.findAllPageByParams(parameters);
     }
@@ -43,7 +43,7 @@ public class BaseController<T> {
      * @param params 参数
      * @return 查询条件
      */
-    @GetMapping("/getSumByParams")
+    //@GetMapping("/getSumByParams")
     public Map<String, Object> getSumByParams(@RequestParam Map<String, String> params) throws Exception {
         return baseService.getSumByParams(params);
     }
