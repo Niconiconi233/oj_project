@@ -12,4 +12,13 @@ public enum ProblemDifficulty {
 
     private Integer code;
     private String desc;
+
+    public static ProblemDifficulty getDifficultyEnumByCode(Integer code){
+        for(ProblemDifficulty diff : ProblemDifficulty.values()){
+            if(code.equals(diff.getCode())){
+                return diff;
+            }
+        }
+        return null;
+    }
 }

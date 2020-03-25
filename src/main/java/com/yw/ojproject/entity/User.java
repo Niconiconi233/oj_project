@@ -3,8 +3,8 @@ package com.yw.ojproject.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yw.ojproject.bo.AdminType;
 import com.yw.ojproject.bo.ProblemPermission;
+import com.yw.ojproject.dto.UserTotalDto;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -27,19 +27,21 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.create_time = new Date();
+        this.ctime = new Date();
     }
     public User()
     {}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@GenericGenerator(name = "guidGenerator", strategy ="uuid")
     @Column(name = "ID", unique = true, nullable = true, length = 32)
     private Integer id;
 
     @Column(name = "USERNAME")
     private String username;
+
+    @Column
+    private String real_name;
 
     @Column(name = "PASSWORD")
     private String password;
@@ -48,7 +50,7 @@ public class User {
     private String email;
 
     @Column(name = "CREATE_TIME")
-    private Date create_time;
+    private Date ctime;
 
     @Column(name = "ADMIN_TYPE")
     private AdminType adminType = AdminType.REGULAR_USER;
@@ -111,5 +113,37 @@ public class User {
     public Boolean canMgmtAllProblem()
     {
         return problemPermission == ProblemPermission.ALL;
+    }
+
+    @Transient
+    public void updateUser(UserTotalDto userTotalDto)
+    {
+        this.username = userTotalDto.getUsername();
+        this.email = userTotalDto.getEmail();
+        if(userTotalDto.getAdmin_type().compareTo(AdminType.ADMIN.getDesc()) == 0)
+        {
+            this.adminType = AdminType.ADMIN;
+        }else if(userTotalDto.getAdmin_type().compareTo(AdminType.SUPER_ADMIN.getDesc()) == 0)
+        {
+            this.adminType = AdminType.SUPER_ADMIN;
+        }else
+        {
+            this.adminType = AdminType.REGULAR_USER;
+        }
+        if(userTotalDto.getProblem_permission().compareTo(ProblemPermission.ALL.getDesc()) == 0)
+        {
+            this.problemPermission = ProblemPermission.ALL;
+        }else if(userTotalDto.getProblem_permission().compareTo(ProblemPermission.OWN.getDesc()) == 0)
+        {
+            this.problemPermission = ProblemPermission.OWN;
+        }else
+        {
+            this.problemPermission = ProblemPermission.NONE;
+        }
+        this.real_name = userTotalDto.getReal_name();
+        this.two_factor_auth = userTotalDto.getTwo_factor_auth();
+        this.open_api = userTotalDto.getOpen_api();
+        this.id_disabled = userTotalDto.getIs_disabled();
+        this.password = userTotalDto.getPassword();
     }
 }

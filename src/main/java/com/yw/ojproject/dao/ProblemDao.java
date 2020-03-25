@@ -14,7 +14,7 @@ public interface ProblemDao extends JpaSpecificationExecutor<Problem>, JpaReposi
     * @Author: YW
     * @Date: 
     */
-    List<Problem> findByVisible(Integer visible);
+    List<Problem> findByVisibleTrue();
     
     /**
     * @Description: 通过id查找
@@ -23,5 +23,5 @@ public interface ProblemDao extends JpaSpecificationExecutor<Problem>, JpaReposi
     * @Author: YW
     * @Date: 
     */
-    Problem findByIdAndVisible(Integer id, Integer visible);
+    Problem findByidAndVisibleTrue(Integer id);
 }

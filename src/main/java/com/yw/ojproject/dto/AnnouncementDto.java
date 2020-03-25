@@ -22,7 +22,7 @@ public class AnnouncementDto {
     public AnnouncementDto(Announcement announcement)
     {
         this.id = announcement.getId();
-        this.created_by = new userimpl(announcement.getCreate_by());
+        this.created_by = new UserSimpleDto(announcement.getCreate_by());
         this.title = announcement.getTitle();
         this.content = announcement.getContent();
         this.create_time = announcement.getCreate_time();
@@ -30,20 +30,8 @@ public class AnnouncementDto {
         this.visible = announcement.getVisible();
     }
 
-    @Data
-    @NoArgsConstructor
-    class userimpl
-    {
-
-        public userimpl(String username)
-        {
-            this.username = username;
-        }
-        private String username;
-    }
-
-    private String id;
-    private userimpl created_by;
+    private Long id;
+    private UserSimpleDto created_by;
     private String title;
     private String content;
     private Date create_time;

@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 *
 * @author: YW
 *
-* @create: 2020-03-12 21:04
+* @create: 2020-03-21 16:14
 **/
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class UsernameEmailStatusDto {
-    Boolean username;
-    Boolean email;
+@AllArgsConstructor
+public class SpjTestCase {
+    private String input_name;
+    private Integer input_size;
 }

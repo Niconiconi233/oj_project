@@ -3,6 +3,7 @@ package com.yw.ojproject.service.impl;
 import com.yw.ojproject.dao.UserDao;
 import com.yw.ojproject.dao.UserProfileDao;
 import com.yw.ojproject.dto.ReturnData;
+import com.yw.ojproject.dto.UserTotalDto;
 import com.yw.ojproject.dto.UsernameEmailStatusDto;
 import com.yw.ojproject.entity.User;
 import com.yw.ojproject.entity.UserProfile;
@@ -12,6 +13,7 @@ import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,14 +30,22 @@ import java.util.UUID;
 * @create: 2020-03-11 17:51
 **/
 @Service
-public class UserServerImpl implements UserServer {
+public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
+
+    //@Autowired
+    UserDao userDao;
 
     @Autowired
-    UserDao userDao;
-    @Autowired
     UserProfileDao userProfileDao;
+
     @Autowired
     RedisUtils redisUtils;
+
+    public UserServerImpl(UserDao userDao)
+    {
+        this.dao = userDao;
+        this.userDao = userDao;
+    }
 
     @Override
     public ReturnData userRegister(String username, String password, String email)
@@ -140,5 +150,48 @@ public class UserServerImpl implements UserServer {
         userDao.save(u);
         redisUtils.set(cookie.getValue(), JsonUtils.objectToJson(u), 432000);
         return new ReturnData(null, "Succeeded");
+    }
+
+    @Override
+    public User findById(Integer id)
+    {
+        return userDao.findById(id).orElse(null);
+    }
+
+    @Override
+    public ReturnData modUser(UserTotalDto userTotalDto)
+    {
+        User u = userDao.findById(userTotalDto.getId()).orElse(null);
+        if(u == null)
+        {
+            return new ReturnData("error", "User does not exist");
+        }
+        Integer count = userDao.countByEmail(userTotalDto.getEmail());
+        //TODO 判断是否存在相同内容
+        /*if(count >= 1)
+        {
+            return new ReturnData("error", "Email already exists");
+        }
+        count = userDao.countByUsername(userTotalDto.getUsername());
+        if(count >= 1)
+        {
+            return new ReturnData("error", "Username already exists");
+        }*/
+        u.updateUser(userTotalDto);
+        userDao.save(u);
+        return new ReturnData(null, userTotalDto);
+    }
+
+    @Override
+    @Transactional
+    public ReturnData delUser(Integer id)
+    {
+        User u = userDao.findById(id).orElse(null);
+        if(u == null)
+        {
+            return new ReturnData();
+        }
+        userProfileDao.deleteByUser(u);
+        return new ReturnData();
     }
 }

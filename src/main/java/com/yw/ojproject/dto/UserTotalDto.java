@@ -1,5 +1,6 @@
 package com.yw.ojproject.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yw.ojproject.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,10 +25,12 @@ public class UserTotalDto {
     {
         this.id = user.getId();
         this.username = user.getUsername();
+        this.real_name = user.getReal_name();
         this.email = user.getEmail();
-        this.admin_type = user.getAdminType().desc();
-        this.problem_permission = user.getProblemPermission().desc();
-        this.create_time = user.getCreate_time();
+        this.admin_type = user.getAdminType().getDesc();
+        this.problem_permission = user.getProblemPermission().getDesc();
+        this.create_time = user.getCtime();
+        //todo 支持登录时间
         this.last_login = new Date();
         this.two_factor_auth = user.getTwo_factor_auth();
         this.open_api = user.getOpen_api();
@@ -35,6 +38,7 @@ public class UserTotalDto {
     }
     private Integer id;
     private String username;
+    private String real_name;
     private String email;
     private String admin_type;
     private String problem_permission;
@@ -43,4 +47,8 @@ public class UserTotalDto {
     private Boolean two_factor_auth;
     private Boolean open_api;
     private Boolean is_disabled;
+    @JsonIgnore
+    private String password;
+    @JsonIgnore
+    private Boolean real_tfa;
 }

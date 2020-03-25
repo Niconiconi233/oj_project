@@ -1,24 +1,17 @@
 package com.yw.ojproject.bo;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public enum ProblemPermission {
-    NONE(0, "none"),
-    OWN(1, "own"),
-    ALL(2, "all");
+    NONE(0, "None"),
+    OWN(1, "Own"),
+    ALL(2, "ALL");
 
     private int value;
     private String desc;
-
-    @JsonValue
-    public int value(){
-        return value;
-    }
-    public String desc() {
-        return desc;
-    }
 }

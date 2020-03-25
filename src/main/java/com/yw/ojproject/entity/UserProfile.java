@@ -1,9 +1,8 @@
 package com.yw.ojproject.entity;
 
-import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.dto.VoProblems;
+import com.yw.ojproject.utils.JsonUtils;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.HashMap;

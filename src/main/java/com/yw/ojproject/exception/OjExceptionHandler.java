@@ -28,10 +28,10 @@ public class OjExceptionHandler {
         {
             logger.error("业务错误", e);
             ojExceptions o = (ojExceptions)e;
-            return new ReturnData();
+            return new ReturnData("error", e.getMessage());
         }
         logger.error("系统错误", e);
-        return new ReturnData();
+        return new ReturnData("error", e.getMessage());
     }
 
 
@@ -40,6 +40,6 @@ public class OjExceptionHandler {
     public ReturnData handle(Exception e)
     {
         logger.error("系统错误", e);
-        return new ReturnData();
+        return new ReturnData("error", e.getMessage());
     }
 }

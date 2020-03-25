@@ -23,8 +23,15 @@ public class ProblemTagController {
     @Autowired
     ProblemTagServer problemTagServer;
 
+    /**
+    * @Description: 获取标签
+    * @Param: []
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @GetMapping("/problem/tags")
-    ReturnData getTags()
+    public ReturnData getTags()
     {
         return problemTagServer.getProblemTag();
     }

@@ -1,7 +1,7 @@
 package com.yw.ojproject.entity;
 
+import com.yw.ojproject.bo.AnnouncementBo;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,12 +19,21 @@ import java.util.Date;
 @Data
 @Table(name = "Announcement")
 public class Announcement {
+    public Announcement(){}
+
+    public Announcement(AnnouncementBo announcementBo)
+    {
+        this.id = System.currentTimeMillis()%1000000;
+        this.title = announcementBo.getTitle();
+        this.content = announcementBo.getContent();
+        this.visible = announcementBo.getVisible();
+        this.create_time = new Date();
+        this.last_update_time = new Date();
+    }
 
     @Id
-    @GeneratedValue(generator = "guidGenerator")
-    @GenericGenerator(name = "guidGenerator", strategy ="uuid")
     @Column(name = "ID", unique = true, nullable = true, length = 32)
-    private String id;
+    private Long id;
 
     @Column(name = "TITLE")
     private String title;
@@ -35,12 +44,22 @@ public class Announcement {
     @Column(name = "CREATE_TIME")
     private Date create_time;
 
-    @Column(name = "CREATE_BY")
-    private String create_by;
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "CREATE_BY", referencedColumnName = "ID")
+    private User create_by;
 
     @Column(name = "LAST_UPDATE_TIME")
     private Date last_update_time;
 
     @Column(name = "VISIBLE")
     private Boolean visible;
+
+    @Transient
+    public void updateAnnouncement(AnnouncementBo announcementBo)
+    {
+        this.last_update_time = new Date();
+        this.title = announcementBo.getTitle();
+        this.content = announcementBo.getContent();
+        this.visible = announcementBo.getVisible();
+    }
 }

@@ -1,10 +1,10 @@
 package com.yw.ojproject.controller;
 
 import com.yw.ojproject.aop.SuperadminRequired;
-import com.yw.ojproject.dto.ProblemsDto;
+import com.yw.ojproject.bo.ProblemBo;
+import com.yw.ojproject.dto.AdminProblemDto;
 import com.yw.ojproject.dto.ProblemsListDto;
 import com.yw.ojproject.dto.ReturnData;
-import com.yw.ojproject.dto.TestCaseInfoDto;
 import com.yw.ojproject.entity.Problem;
 import com.yw.ojproject.service.ProblemServer;
 import org.springframework.data.domain.Page;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,14 +37,28 @@ public class ProblemController extends BaseController<Problem> {
         this.problemServer = problemServer;
     }
 
+    /**
+    * @Description: 随机一道题
+    * @Param: []
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @GetMapping("/pickone")
     public ReturnData pickOne()
     {
         return problemServer.pickOne();
     }
 
+    /**
+    * @Description: 获取problem 列表
+    * @Param: [params, httpServletRequest]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @GetMapping("/problem")
-    public ReturnData problems(@RequestParam Map<String, String> params, HttpServletRequest httpServletRequest)
+    public Object problems(@RequestParam Map<String, String> params, HttpServletRequest httpServletRequest)
     {
         if(params.containsKey("problem_id"))
         {
@@ -58,7 +71,7 @@ public class ProblemController extends BaseController<Problem> {
         Map<String, String> args = new LinkedHashMap<>();
         args.put("page", params.get("page"));
         args.put("size", params.get("limit"));
-        args.put("visible_eq", "1");
+        //args.put("visible_eq", "true");
         //按难度获取
         if(params.containsKey("difficulty"))
         {
@@ -90,20 +103,26 @@ public class ProblemController extends BaseController<Problem> {
         if(params.containsKey("keyword"))
         {
             String keyword = params.get("keyword");
-            args.put("title_eq", keyword);
-            args.put("id_eq", keyword);
+            args.put("title_lk", "%" + keyword + "%");
             Page<Problem> result = findAllPageByParams(args);
             problemServer._add_problem_status(result.getContent(), httpServletRequest);
             return new ReturnData(null, new ProblemsListDto(result));
         }
         Page<Problem> result = findAllPageByParams(args);
-        problemServer._add_problem_status(result.getContent(), httpServletRequest);
+        //problemServer._add_problem_status(result.getContent(), httpServletRequest);
         return new ReturnData(null, new ProblemsListDto(result));
     }
 
+    /**
+    * @Description: 管理员接口 获取problem
+    * @Param: [params]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @SuperadminRequired
     @GetMapping("/admin/problem")
-    public ReturnData adminGetProblems(Map<String, String> params)
+    public ReturnData adminGetProblems(@RequestParam Map<String, String> params)
     {
         if(params.containsKey("id"))
         {
@@ -117,8 +136,7 @@ public class ProblemController extends BaseController<Problem> {
         if(params.containsKey("keyword"))
         {
             String keyword = params.get("keyword");
-            args.put("title_eq", keyword);
-            args.put("id_eq", keyword);
+            args.put("title_lk", "%" + keyword + "%");
             Page<Problem> result = findAllPageByParams(args);
             return new ReturnData(null, new ProblemsListDto(result));
         }
@@ -126,22 +144,57 @@ public class ProblemController extends BaseController<Problem> {
         return new ReturnData(null, new ProblemsListDto(result));
     }
 
+    /**
+    * @Description: 管理员接口 修改问题
+    * @Param: [problem]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @SuperadminRequired
     @PutMapping("/admin/problem")
-    ReturnData adminPutProblems(@RequestBody Problem problem)
+    public ReturnData adminPutProblems(@RequestBody AdminProblemDto problem)
     {
-        return new ReturnData();
+        return problemServer.putProblems(problem);
     }
 
+    /**
+    * @Description: 管理员接口 上传测试文件
+    * @Param: [spj, file]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @SuperadminRequired
     @PostMapping("/admin/test_case")
-    ReturnData uploadTestCase(@RequestParam Boolean spj, @RequestParam("file") MultipartFile file)
-    {
+    public ReturnData uploadTestCase(@RequestParam Boolean spj, @RequestParam("file") MultipartFile file) throws IOException {
         if(file.isEmpty())
         {
             return new ReturnData("error", "Upload failed");
         }
         return problemServer.uploadTestCase(spj, file);
+    }
+
+    /**
+    * @Description: 管理员接口 添加问题
+    * @Param: [b, httpServletRequest]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
+    @SuperadminRequired
+    @PostMapping("/admin/problem")
+    public ReturnData setProblems(@RequestBody ProblemBo b, HttpServletRequest httpServletRequest)
+    {
+        return problemServer.setProblems(b, httpServletRequest);
+    }
+
+
+    @SuperadminRequired
+    @DeleteMapping("/admin/problem")
+    public ReturnData delProblems(@RequestParam Integer id)
+    {
+        return problemServer.delProblems(id);
     }
 
 

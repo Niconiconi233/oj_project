@@ -1,5 +1,6 @@
 package com.yw.ojproject.dto;
 
+import com.yw.ojproject.bo.ProblemCaseScore;
 import com.yw.ojproject.bo.ProblemDifficulty;
 import com.yw.ojproject.bo.ProblemIOModeBo;
 import com.yw.ojproject.bo.ProblemSample;
@@ -22,27 +23,31 @@ import java.util.Map;
 *
 * @author: YW
 *
-* @create: 2020-03-18 14:48
+* @create: 2020-03-24 19:35
 **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProblemsDto {
-    public ProblemsDto(Problem problem)
+public class AdminProblemDto {
+
+    public AdminProblemDto(Problem problem)
     {
         this.id = problem.getId();
         this.tags = new LinkedList<>();
-        for(ProblemTag tmp : problem.getTags())
+        for(ProblemTag tag : problem.getTags())
         {
-            this.tags.add(tmp.getName());
+            this.tags.add(tag.getName());
         }
+        this.is_public = problem.getIs_public();
         this.created_by = new UserSimpleDto(problem.getCreate_by().getId(), problem.getCreate_by().getUsername(), null);
-        this.templates = JsonUtils.jsonStringToObject(problem.getTemplates(), String.class);
+        this.templates = problem.getTemplates();
         this.title = problem.getTitle();
         this.description = problem.getDescription();
         this.input_description = problem.getInput_description();
         this.output_description = problem.getOutput_description();
         this.samples = JsonUtils.jsonStringToList(problem.getSamples(), ProblemSample.class);
+        this.test_case_id = problem.getTest_case_id();
+        this.test_case_score = JsonUtils.jsonStringToList(problem.getTest_case_score(), ProblemCaseScore.class);
         this.hint = problem.getHint();
         this.languages = JsonUtils.jsonStringToList(problem.getLanguages(), String.class);
         this.create_time = problem.getTime();
@@ -52,27 +57,33 @@ public class ProblemsDto {
         this.io_mode = JsonUtils.jsonStringToObject(problem.getIo_mode(), ProblemIOModeBo.class);
         this.spj = problem.getSpj();
         this.spj_language = problem.getSpj_language();
+        this.spj_code = problem.getSpj_code();
+        this.spj_version = problem.getSpj_version();
+        this.spj_compile_ok = problem.getSpj_compile_ok();
         this.rule_type = problem.getRule_type().getDesc();
+        this.visible = problem.getVisible();
         this.difficulty = ProblemDifficulty.getDifficultyEnumByCode(problem.getDifficulty()).getDesc();
         this.source = problem.getSource();
-        this.total_score = problem.getTotal_score();
         this.submission_number = problem.getSubmission_number();
         this.accepted_number = problem.getAccepted_number();
+        this.total_score = problem.getTotal_score();
         this.statistic_info = JsonUtils.jsonStringToObject(problem.getStatistic_info(), Map.class);
         this.share_submission = problem.getShare_submission();
-        this.contest = null;
-        this.my_status = problem.getMy_status();
+
     }
 
     private Integer id;
     private List<String> tags;
+    private Boolean is_public;
     private UserSimpleDto created_by;
-    private Object templates;
+    private String templates;
     private String title;
     private String description;
     private String input_description;
     private String output_description;
     private List<ProblemSample> samples;
+    private String test_case_id;
+    private List<ProblemCaseScore> test_case_score;
     private String hint;
     private List<String> languages;
     private Date create_time;
@@ -82,7 +93,11 @@ public class ProblemsDto {
     private ProblemIOModeBo io_mode;
     private Boolean spj;
     private String spj_language;
+    private String spj_code;
+    private String spj_version;
+    private Boolean spj_compile_ok;
     private String rule_type;
+    private Boolean visible;
     private String difficulty;
     private String source;
     private Integer total_score;
@@ -90,6 +105,5 @@ public class ProblemsDto {
     private Integer accepted_number;
     private Map<Integer, Integer> statistic_info;
     private Boolean share_submission;
-    private String contest;
-    private Integer my_status;
+    private String contest = null;
 }

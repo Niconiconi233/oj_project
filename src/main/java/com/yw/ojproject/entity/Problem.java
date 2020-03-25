@@ -1,13 +1,15 @@
 package com.yw.ojproject.entity;
 
-import com.yw.ojproject.bo.*;
+import com.yw.ojproject.bo.ProblemBo;
+import com.yw.ojproject.bo.ProblemDifficulty;
+import com.yw.ojproject.bo.ProblemRuleType;
+import com.yw.ojproject.dto.AdminProblemDto;
 import com.yw.ojproject.utils.JsonUtils;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -23,28 +25,47 @@ import java.util.List;
 @Data
 @Table(name = "Problem")
 public class Problem {
-    public Problem()
-    {
-        /*this.title;
-        this.description;
-        this.input_description;
-        this.output_description;
-        this.test_case_id;
-        this.template;
-        this.create_by;
-        this.time_limit;
-        this.memory_limit;
-        this.spj_language;
-        this.spj_code;
-        this.spj_version;
-        this.rule_type;
-        this.tags;
-        this.source;*/
+    public Problem(){}
+
+    public Problem(ProblemBo problemBo) {
+        this.id = problemBo.get_id();
+        this.title = problemBo.getTitle();
+        this.description = problemBo.getDescription();
+        this.input_description = problemBo.getInput_description();
+        this.output_description = problemBo.getOutput_description();
+        this.time_limit = problemBo.getTime_limit();
+        this.memory_limit = problemBo.getMemory_limit();
+        if (problemBo.getDifficulty().compareTo(ProblemDifficulty.HIGH.getDesc()) == 0) {
+            this.difficulty = ProblemDifficulty.HIGH.getCode();
+        } else if (problemBo.getDifficulty().compareTo(ProblemDifficulty.LOW.getDesc()) == 0) {
+            this.difficulty = ProblemDifficulty.LOW.getCode();
+        } else {
+            this.difficulty = ProblemDifficulty.MID.getCode();
+        }
+        this.visible = problemBo.getVisible();
+        this.share_submission = problemBo.getShare_subission();
+        this.spj = problemBo.getSpj();
+        this.spj_language = problemBo.getSpj_languages();
+        this.spj_code = problemBo.getSpj_code();
+        this.spj_compile_ok = problemBo.getSpj_compile_ok();
+        this.test_case_id = problemBo.getTest_case_id();
+        if (problemBo.getRule_type().compareTo(ProblemRuleType.IO.getDesc()) == 0)
+        {
+            this.rule_type = ProblemRuleType.IO;
+        }else
+        {
+            this.rule_type = ProblemRuleType.ACM;
+        }
+        this.hint = problemBo.getHint();
+        this.source = problemBo.getSource();
+        this.spj_version = problemBo.getSpj_version();
+        this.total_score = problemBo.getTotal_score();
+        this.test_case_score = JsonUtils.listToJsonString(problemBo.getTest_case_score());
+        this.templates = JsonUtils.objectToJson(problemBo.getTemplate());
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@GenericGenerator(name = "guidGenerator", strategy ="uuid")
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", unique = true, nullable = true, length = 32)
     private Integer id;
 
@@ -52,7 +73,7 @@ public class Problem {
     //private Contest contest;
 
     @Column(name = "IS_PUBLIC")
-    private Integer is_public = 1;
+    private Boolean is_public = true;
 
     @Column(name = "TITLE")
     private String title;
@@ -67,22 +88,22 @@ public class Problem {
     private String output_description;
 
     @Column(name = "SAMPLES")
-    private String samples = JsonUtils.listToJsonString(new LinkedList<ProblemSample>());
+    private String samples;
 
     @Column(name = "TEST_CASE_ID")
     private String test_case_id;
 
-    @Column(name = "TEST_CASE_SCORE")
-    private String test_case_score = JsonUtils.listToJsonString(new LinkedList<ProblemCaseScore>());
+    @Column(name = "TEST_CASE_SCORE", length = 512)
+    private String test_case_score;
 
     @Column(name = "HINT")
-    private String hint = null;
+    private String hint;
 
     @Column(name = "LANGUAGES")
-    private String languages = JsonUtils.listToJsonString(new LinkedList<String>());
+    private String languages;
 
-    @Column(name = "TEMPLATE")
-    private String template;
+    @Column(name = "TEMPLATE", length = 512)
+    private String templates;
 
     @Column(name = "CREATE_TIME")
     private Date time = new Date();
@@ -90,7 +111,7 @@ public class Problem {
     @Column(name = "LAST_UPDATE_TIME")
     private Date last_update_time = new Date();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "CREATE_BY", referencedColumnName = "ID")
     private User create_by;
 
@@ -101,10 +122,10 @@ public class Problem {
     private Integer memory_limit;
 
     @Column(name = "IO_MODE")
-    private String io_mode = JsonUtils.objectToJson(ProblemIOModeBo.default_io_mode());
+    private String io_mode;
 
     @Column(name = "SPJ")
-    private Boolean spj = false;
+    private Boolean spj;
 
     @Column(name = "SPJ_LANGUAGE")
     private String spj_language;
@@ -116,18 +137,18 @@ public class Problem {
     private String spj_version;
 
     @Column(name = "SPJ_COMPILE_OK")
-    private Boolean spj_compile_ok = false;
+    private Boolean spj_compile_ok;
 
     @Column(name = "RULE_TYPE")
     private ProblemRuleType rule_type;
 
     @Column(name = "VISIBLE")
-    private Integer visible = 1;
+    private Boolean visible;
 
     @Column(name = "DIFFICULTY")
-    private ProblemDifficulty difficulty;
+    private Integer difficulty;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "TAG_ID", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private List<ProblemTag> tags;
 
@@ -162,6 +183,47 @@ public class Problem {
     public void add_ac_number()
     {
         this.accepted_number = this.accepted_number + 1;
+    }
+
+    @Transient
+    public void modProblem(AdminProblemDto adminProblemDto)
+    {
+        this.title = adminProblemDto.getTitle();
+        this.description = adminProblemDto.getDescription();
+        this.is_public = adminProblemDto.getIs_public();
+        this.templates = adminProblemDto.getTemplates();
+        this.samples = JsonUtils.listToJsonString(adminProblemDto.getSamples());
+        this.input_description = adminProblemDto.getInput_description();
+        this.output_description = adminProblemDto.getOutput_description();
+        this.time_limit = adminProblemDto.getTime_limit();
+        this.languages = JsonUtils.listToJsonString(adminProblemDto.getLanguages());
+        this.memory_limit = adminProblemDto.getMemory_limit();
+        this.last_update_time = new Date();
+        this.io_mode = JsonUtils.objectToJson(adminProblemDto.getIo_mode());
+        if (adminProblemDto.getDifficulty().compareTo(ProblemDifficulty.HIGH.getDesc()) == 0) {
+            this.difficulty = ProblemDifficulty.HIGH.getCode();
+        } else if (adminProblemDto.getDifficulty().compareTo(ProblemDifficulty.LOW.getDesc()) == 0) {
+            this.difficulty = ProblemDifficulty.LOW.getCode();
+        } else {
+            this.difficulty = ProblemDifficulty.MID.getCode();
+        }
+        this.visible = adminProblemDto.getVisible();
+        this.share_submission = adminProblemDto.getShare_submission();
+        this.spj = adminProblemDto.getSpj();
+        this.spj_language = adminProblemDto.getSpj_language();
+        this.spj_code = adminProblemDto.getSpj_code();
+        this.spj_compile_ok = adminProblemDto.getSpj_compile_ok();
+        this.test_case_id = adminProblemDto.getTest_case_id();
+        this.hint = adminProblemDto.getHint();
+        this.source = adminProblemDto.getSource();
+        this.spj_version = adminProblemDto.getSpj_version();
+        this.total_score = adminProblemDto.getTotal_score();
+        this.test_case_score = JsonUtils.listToJsonString(adminProblemDto.getTest_case_score());
+        this.source = adminProblemDto.getSource();
+        this.total_score = adminProblemDto.getTotal_score();
+        this.submission_number = adminProblemDto.getSubmission_number();
+        this.accepted_number = adminProblemDto.getAccepted_number();
+        this.statistic_info = JsonUtils.objectToJson(adminProblemDto.getStatistic_info());
     }
 
 }

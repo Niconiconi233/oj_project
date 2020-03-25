@@ -11,13 +11,15 @@ import lombok.NoArgsConstructor;
 *
 * @author: YW
 *
-* @create: 2020-03-19 17:15
+* @create: 2020-03-21 16:12
 **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TestCaseInfoDto {
-    private String id;
-    private Object info;
-    private Boolean spj;
+public class NormalTestCase {
+    private String stripped_output_md5;
+    private Integer output_size;
+    private String input_name;
+    private Integer input_size;
+    private String output_name;
 }

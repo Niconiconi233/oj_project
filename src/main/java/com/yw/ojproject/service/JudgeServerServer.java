@@ -1,8 +1,5 @@
 package com.yw.ojproject.service;
 
-import com.yw.ojproject.dto.ReturnData;
-import org.springframework.scheduling.annotation.Async;
-
 /**
 * @program: ojproject
 *

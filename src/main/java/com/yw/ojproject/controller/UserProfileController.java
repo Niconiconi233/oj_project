@@ -37,6 +37,13 @@ public class UserProfileController extends BaseController<UserProfile> {
         this.userProfileService = userProfileService;
     }
 
+    /**
+    * @Description: 获取排行信息
+    * @Param: [pargrams]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @GetMapping("/user_rank")
     public ReturnData getUserRank(@RequestParam Map<String, String> pargrams)
     {
@@ -58,9 +65,16 @@ public class UserProfileController extends BaseController<UserProfile> {
         return new ReturnData(null, new UserRankListDto(p));
     }
 
+    /**
+    * @Description: 用户配置文件
+    * @Param: [httpServletRequest, httpServletResponse]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @LoginRequired
     @GetMapping("/profile")
-    ReturnData userProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+    public ReturnData userProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
     {
         return userProfileService.userProfile(httpServletRequest, httpServletResponse);
     }

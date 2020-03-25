@@ -11,13 +11,14 @@ import lombok.NoArgsConstructor;
 *
 * @author: YW
 *
-* @create: 2020-03-18 19:18
+* @create: 2020-03-25 21:08
 **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProblemSample {
-
-    private String input;
-    private String output;
+public class AnnouncementBo {
+    private Long id;
+    private String title;
+    private String content;
+    private Boolean visible;
 }

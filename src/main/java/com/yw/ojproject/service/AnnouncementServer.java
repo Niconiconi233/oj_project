@@ -1,7 +1,8 @@
 package com.yw.ojproject.service;
 
+import com.yw.ojproject.bo.AnnouncementBo;
 import com.yw.ojproject.dto.ReturnData;
-import net.bytebuddy.asm.Advice;
+import com.yw.ojproject.entity.Announcement;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 *
 * @create: 2020-03-13 19:13
 **/
-public interface AnnouncementServer {
+public interface AnnouncementServer extends BaseServer<Announcement> {
 
     /**
     * @Description: 获取公告
@@ -32,7 +33,7 @@ public interface AnnouncementServer {
     * @Author: YW
     * @Date:
     */
-    public ReturnData setAnnouncement(String title, String content, Boolean visible, HttpServletRequest httpServletRequest);
+    public ReturnData setAnnouncement(AnnouncementBo announcementBo, HttpServletRequest httpServletRequest);
     
     /**
     * @Description: 删除公告
@@ -41,5 +42,14 @@ public interface AnnouncementServer {
     * @Author: YW
     * @Date: 
     */
-    public ReturnData delAnnouncement(String id);
+    public ReturnData delAnnouncement(Long id);
+    
+    /**
+    * @Description: 修改公告
+    * @Param: [announcementBo]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
+    public ReturnData putAnnouncement(AnnouncementBo announcementBo);
 }

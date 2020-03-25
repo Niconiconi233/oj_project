@@ -15,4 +15,13 @@ public interface UserProfileDao extends JpaRepository<UserProfile, String>, JpaS
     */
     public UserProfile findByUser(User user);
 
+    /**
+    * @Description: 删除用户
+    * @Param: [user]
+    * @return: void
+    * @Author: YW
+    * @Date: 
+    */
+    public void deleteByUser(User user);
+
 }

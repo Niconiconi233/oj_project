@@ -4,7 +4,7 @@ import com.yw.ojproject.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface UserDao extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
+public interface UserDao extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     /**
     * @Description: 登陆
     * @Param: [username, password]

@@ -3,10 +3,12 @@ package com.yw.ojproject.entity;
 import com.yw.ojproject.bo.ContestRuleType;
 import com.yw.ojproject.bo.ContestStatus;
 import com.yw.ojproject.bo.ContestType;
-import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
