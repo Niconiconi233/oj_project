@@ -37,7 +37,6 @@ import java.util.*;
 @RequestMapping(value = "/api")
 public class UserController extends BaseController<User> {
 
-    //@Autowired
     private UserServer userServer;
 
     @Autowired
@@ -47,7 +46,6 @@ public class UserController extends BaseController<User> {
     {
         this.baseService = userServer;
         this.userServer = userServer;
-
     }
 
     /**
@@ -176,6 +174,13 @@ public class UserController extends BaseController<User> {
         return new ReturnData(null, png_64);
     }
 
+    /**
+    * @Description: 管理员接口 查询用户
+    * @Param: [params]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @SuperadminRequired
     @GetMapping("/admin/user")
     public ReturnData adminGetUser(@RequestParam Map<String, String> params)
@@ -208,6 +213,13 @@ public class UserController extends BaseController<User> {
     }
 
 
+    /**
+    * @Description: 管理员接口 修改用户
+    * @Param: [userTotalDto]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @SuperadminRequired
     @PutMapping("/admin/user")
     public ReturnData adminPutUser(@RequestBody UserTotalDto userTotalDto)
@@ -215,6 +227,13 @@ public class UserController extends BaseController<User> {
         return userServer.modUser(userTotalDto);
     }
 
+    /**
+    * @Description: 管理员接口 删除用户
+    * @Param: [id]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @SuperadminRequired
     @DeleteMapping("/admin/user")
     public ReturnData adminDelUser(@RequestParam Integer id)

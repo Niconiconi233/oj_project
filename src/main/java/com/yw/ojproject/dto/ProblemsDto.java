@@ -62,6 +62,7 @@ public class ProblemsDto {
         this.share_submission = problem.getShare_submission();
         this.contest = null;
         this.my_status = problem.getMy_status();
+        this.visible = problem.getVisible();
     }
 
     private Integer id;
@@ -92,4 +93,5 @@ public class ProblemsDto {
     private Boolean share_submission;
     private String contest;
     private Integer my_status;
+    private Boolean visible;
 }

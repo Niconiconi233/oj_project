@@ -5,12 +5,15 @@ import com.yw.ojproject.exception.ojExceptions;
 import com.yw.ojproject.utils.CookieUtils;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RedisUtils;
+import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -26,11 +29,15 @@ import javax.servlet.http.HttpServletRequest;
 *
 * @create: 2020-03-13 19:24
 **/
+@Aspect
+@Component
+@Log4j2
 public class SuperadminAspect {
+
     @Autowired
     RedisUtils redisUtils;
 
-    Logger logger = LoggerFactory.getLogger(LogAspect.class);
+    Logger logger = LoggerFactory.getLogger(SuperadminAspect.class);
 
     /**
      * 功能描述: 拦截对这个包下所有方法的访问
@@ -39,11 +46,11 @@ public class SuperadminAspect {
      * @return:void
      **/
     @Pointcut(value = "@annotation(com.yw.ojproject.aop.SuperadminRequired)")
-    public void superadminLog() {
+    public void superadminCheck() {
     }
 
     // 前置通知
-    @Before("adminLog()")
+    @Before("superadminCheck()")
     public void loginBefore(JoinPoint joinPoint) {
 
         // 我们从请求的上下文中获取request，记录请求的内容

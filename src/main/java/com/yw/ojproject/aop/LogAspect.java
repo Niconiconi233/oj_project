@@ -41,11 +41,11 @@ public class LogAspect {
      * @return:void
      **/
     @Pointcut(value = "@annotation(com.yw.ojproject.aop.LoginRequired)")
-    public void loginLog() {
+    public void loginCheck() {
     }
 
     // 前置通知
-    @Before("loginLog()")
+    @Before("loginCheck()")
     public void loginBefore(JoinPoint joinPoint) {
 
         // 我们从请求的上下文中获取request，记录请求的内容
@@ -57,13 +57,13 @@ public class LogAspect {
         if(cookie == null)
         {
             logger.warn("cookie中查不到token");
-            throw new ojExceptions("001", "未登陆");
+            throw new ojExceptions("001", "找不到token");
         }
 
         if(!redisUtils.hasKey(cookie.getValue()))
         {
             logger.warn("redis中找不到token");
-            throw new ojExceptions("002", "已过期");
+            throw new ojExceptions("002", "redis中找不到token");
         }
         //logger.info("请求路径 : " + request.getRequestURL());
         //logger.info("请求方式 : " + request.getMethod());
@@ -72,21 +72,21 @@ public class LogAspect {
         //logger.info("参数 : " + Arrays.toString(joinPoint.getArgs()));
     }
 
-    @AfterReturning(returning = "object", pointcut = "loginLog()")
+    @AfterReturning(returning = "object", pointcut = "loginCheck()")
     public void doAfterReturning(Object object) {
         logger.info("方法的返回值 : " + object);
         //System.out.println("方法的返回值 : " + object);
     }
 
     // 方法发生异常时执行该方法
-    @AfterThrowing(throwing = "e",pointcut = "loginLog()")
+    @AfterThrowing(throwing = "e",pointcut = "loginCheck()")
     public void throwsExecute(JoinPoint joinPoint, Exception e) {
         logger.info("方法执行异常 : " + e.getMessage());
         //System.err.println("方法执行异常 : " + e.getMessage());
     }
 
     // 后置通知
-    @After("loginLog()")
+    @After("loginCheck()")
     public void afterInform() {
         logger.info("后置通知结束");
         //System.out.println("后置通知结束");

@@ -36,7 +36,7 @@ public class AdminAspect {
     @Autowired
     RedisUtils redisUtils;
 
-    Logger logger = LoggerFactory.getLogger(LogAspect.class);
+    Logger logger = LoggerFactory.getLogger(AdminAspect.class);
 
     /**
      * 功能描述: 拦截对这个包下所有方法的访问
@@ -45,11 +45,11 @@ public class AdminAspect {
      * @return:void
      **/
     @Pointcut(value = "@annotation(com.yw.ojproject.aop.AdminRequired)")
-    public void adminLog() {
+    public void adminCheck() {
     }
 
     // 前置通知
-    @Before("adminLog()")
+    @Before("adminCheck()")
     public void loginBefore(JoinPoint joinPoint) {
 
         // 我们从请求的上下文中获取request，记录请求的内容

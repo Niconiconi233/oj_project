@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public enum ProblemPermission {
     NONE(0, "None"),
     OWN(1, "Own"),
-    ALL(2, "ALL");
+    ALL(2, "All");
 
     private int value;
     private String desc;

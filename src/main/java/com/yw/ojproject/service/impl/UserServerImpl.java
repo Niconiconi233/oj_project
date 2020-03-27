@@ -166,7 +166,7 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
         {
             return new ReturnData("error", "User does not exist");
         }
-        Integer count = userDao.countByEmail(userTotalDto.getEmail());
+        //Integer count = userDao.countByEmail(userTotalDto.getEmail());
         //TODO 判断是否存在相同内容
         /*if(count >= 1)
         {

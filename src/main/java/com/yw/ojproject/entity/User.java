@@ -144,6 +144,8 @@ public class User {
         this.two_factor_auth = userTotalDto.getTwo_factor_auth();
         this.open_api = userTotalDto.getOpen_api();
         this.id_disabled = userTotalDto.getIs_disabled();
-        this.password = userTotalDto.getPassword();
+        if(userTotalDto.getPassword().compareTo("") != 0) {
+            this.password = userTotalDto.getPassword();
+        }
     }
 }
