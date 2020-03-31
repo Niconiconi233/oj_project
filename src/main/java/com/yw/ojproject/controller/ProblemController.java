@@ -1,6 +1,8 @@
 package com.yw.ojproject.controller;
 
+import com.yw.ojproject.aop.AdminRequired;
 import com.yw.ojproject.aop.SuperadminRequired;
+import com.yw.ojproject.bo.CompileSPJBo;
 import com.yw.ojproject.bo.ProblemBo;
 import com.yw.ojproject.dto.AdminProblemDto;
 import com.yw.ojproject.dto.ProblemsListDto;
@@ -8,7 +10,10 @@ import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.Problem;
 import com.yw.ojproject.service.ProblemServer;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -195,6 +200,13 @@ public class ProblemController extends BaseController<Problem> {
     public ReturnData delProblems(@RequestParam Integer id)
     {
         return problemServer.delProblems(id);
+    }
+
+    @AdminRequired
+    @PostMapping("/admin/compile_spj")
+    public ReturnData adminCompileSPJ(@RequestBody CompileSPJBo compileSPJBo)
+    {
+        return problemServer.compileSPJ(compileSPJBo);
     }
 
 

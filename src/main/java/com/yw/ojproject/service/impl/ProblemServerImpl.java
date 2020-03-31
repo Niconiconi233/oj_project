@@ -1,18 +1,18 @@
 package com.yw.ojproject.service.impl;
 
+import com.yw.ojproject.bo.CompileSPJBo;
 import com.yw.ojproject.bo.ProblemBo;
 import com.yw.ojproject.bo.ProblemRuleType;
 import com.yw.ojproject.dao.ProblemDao;
 import com.yw.ojproject.dao.ProblemTagDao;
 import com.yw.ojproject.dto.*;
+import com.yw.ojproject.entity.JudgeServer;
 import com.yw.ojproject.entity.Problem;
 import com.yw.ojproject.entity.ProblemTag;
 import com.yw.ojproject.entity.User;
+import com.yw.ojproject.service.JudgeServerServer;
 import com.yw.ojproject.service.ProblemServer;
-import com.yw.ojproject.utils.CookieUtils;
-import com.yw.ojproject.utils.JsonUtils;
-import com.yw.ojproject.utils.RandUtils;
-import com.yw.ojproject.utils.RedisUtils;
+import com.yw.ojproject.utils.*;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +48,9 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
 
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    JudgeServerServer judgeServerServer;
 
     @Autowired
     private Environment environment;
@@ -432,5 +435,34 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
     {
         problemDao.deleteById(id);
         return new ReturnData();
+    }
+
+    @Override
+    @Transactional
+    public ReturnData compileSPJ(CompileSPJBo compileSPJBo) {
+        String spj_version = RandUtils.getRandomString(8);
+        JudgeServer judgeServer = judgeServerServer.chooseJudgeServer();
+        if(judgeServer == null)
+        {
+            return new ReturnData("error", "no oj server avaliable");
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("spj_version", spj_version);
+        params.put("src", compileSPJBo.getSpj_code());
+        if(compileSPJBo.getSpj_language().compareTo("C++") == 0)
+        {
+            params.put("language_type", "cpp_lang");
+        }else
+        {
+            params.put("language_type", "c_lang");
+        }
+        //TODO fix url
+        ReturnData ans = RequestUtils.sendPostRequest("http://127.0.0.1:10088/compile_spj", params, judgeServer.getToken());
+        judgeServerServer.releaseJudgeServer(judgeServer);
+        if(((String)ans.getData()).compareTo("success") != 0)
+        {
+            ans.setError("error");
+        }
+        return ans;
     }
 }

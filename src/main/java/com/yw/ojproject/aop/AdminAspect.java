@@ -72,7 +72,7 @@ public class AdminAspect {
 
         String ustr = (String)redisUtils.get(cookie.getValue());
         User user = JsonUtils.jsonStringToObject(ustr, User.class);
-        if(!user.isAdmin() || !user.isSuperAdmin())
+        if(!user.isSuperAdmin() && !user.isAdmin())
         {
             logger.warn("非管理员或超级管理员");
             throw new ojExceptions("003", "非管理员或超级管理员");

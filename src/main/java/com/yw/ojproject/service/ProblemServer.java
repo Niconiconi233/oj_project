@@ -1,14 +1,17 @@
 package com.yw.ojproject.service;
 
+import com.yw.ojproject.bo.CompileSPJBo;
 import com.yw.ojproject.bo.ProblemBo;
 import com.yw.ojproject.dto.AdminProblemDto;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.Problem;
+import net.bytebuddy.asm.Advice;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface ProblemServer extends BaseServer<Problem> {
 
@@ -94,4 +97,14 @@ public interface ProblemServer extends BaseServer<Problem> {
     * @Date: 
     */
     public ReturnData delProblems(Integer id);
+    
+    
+    /**
+    * @Description: 编译SPJ
+    * @Param: [spjBo]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
+    public ReturnData compileSPJ(CompileSPJBo spjBo);
 }

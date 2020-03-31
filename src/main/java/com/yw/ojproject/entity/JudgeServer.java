@@ -1,5 +1,6 @@
 package com.yw.ojproject.entity;
 
+import com.yw.ojproject.bo.HeartBeatBo;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -19,6 +20,23 @@ import java.util.Date;
 @Data
 @Table(name = "JudgeServer")
 public class JudgeServer {
+    public JudgeServer(){}
+
+    public JudgeServer(HeartBeatBo heartBeatBo, String ip, String token)
+    {
+        this.hostname = heartBeatBo.getHostname();
+        this.ip = ip;
+        this.judger_version = heartBeatBo.getJudger_version();
+        this.cpu_core = heartBeatBo.getCpu_core();
+        this.memory_usage = heartBeatBo.getMemory();
+        this.heartbeat = new Date();
+        this.create_time = new Date();
+        this.tasknumber = 0;
+        this.service_url = heartBeatBo.getService_url();
+        this.disabled = false;
+        this.token = token;
+    }
+
     @Id
     @GeneratedValue(generator = "guidGenerator")
     @GenericGenerator(name = "guidGenerator", strategy = "uuid")
@@ -37,11 +55,14 @@ public class JudgeServer {
     @Column(name = "CPU_CORE")
     private Integer cpu_core;
 
+    @Column(name = "CPU_USAGE")
+    private Float cpu;
+
     @Column(name = "MEMORY_USAGE")
     private Float memory_usage;
 
     @Column(name = "LAST_HEARTBEAT")
-    private Date last_heartbeat;
+    private Date heartbeat;
 
     @Column(name = "CREATE_TIIME")
     private Date create_time;
@@ -55,15 +76,30 @@ public class JudgeServer {
     @Column(name = "IS_DISABLED")
     private Boolean disabled;
 
+    @Column(name = "TOKEN")
+    private String token;
+
     @Transient
-    String status()
+    public String status()
     {
         Date now = new Date();
-        if(now.getTime() - this.last_heartbeat.getTime() > 6) {
+        Long res = (now.getTime() - this.heartbeat.getTime())/1000;
+        if(res > 6) {
             return "abnormal";
         }
         return "normal";
+    }
 
+    @Transient
+    public void updateServer(HeartBeatBo heartBeatBo)
+    {
+        this.hostname = heartBeatBo.getHostname();
+        this.judger_version = heartBeatBo.getJudger_version();
+        this.cpu_core = heartBeatBo.getCpu_core();
+        this.cpu = heartBeatBo.getCpu();
+        this.memory_usage = heartBeatBo.getMemory();
+        this.heartbeat = new Date();
+        this.service_url = heartBeatBo.getService_url();
     }
 
 }

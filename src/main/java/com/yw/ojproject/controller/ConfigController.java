@@ -1,20 +1,19 @@
 package com.yw.ojproject.controller;
 
-import com.yw.ojproject.aop.AdminRequired;
-import com.yw.ojproject.aop.LoginRequired;
 import com.yw.ojproject.aop.SuperadminRequired;
+import com.yw.ojproject.bo.HeartBeatBo;
 import com.yw.ojproject.dto.*;
 import com.yw.ojproject.service.ConfigServer;
+import com.yw.ojproject.service.JudgeServerServer;
+import com.yw.ojproject.utils.IpUtils;
 import com.yw.ojproject.utils.JsonUtils;
-import net.bytebuddy.implementation.bind.annotation.Super;
+import com.yw.ojproject.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisZSetCommands;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Map;
 
 /**
 * @program: ojproject
@@ -33,16 +32,18 @@ public class ConfigController {
     @Autowired
     ConfigServer configServer;
 
+    @Autowired
+    JudgeServerServer judgeServerServer;
+
     /**
-    * @Description: 获取网页信息
-    * @Param: []
-    * @return: com.yw.ojproject.dto.ReturnData
-    * @Author: YW
-    * @Date: 
-    */
+     * @Description: 获取网页信息
+     * @Param: []
+     * @return: com.yw.ojproject.dto.ReturnData
+     * @Author: YW
+     * @Date:
+     */
     @GetMapping("/website")
-    public ReturnData website()
-    {
+    public ReturnData website() {
         Object ans = JsonUtils.ResolveJsonFileToObject("webconfig.json");
         return new ReturnData(null, ans);
     }
@@ -63,12 +64,12 @@ public class ConfigController {
     }
 
     /**
-    * @Description: 管理员接口 修改网站信息
-    * @Param: [websiteConfigDto]
-    * @return: com.yw.ojproject.dto.ReturnData
-    * @Author: YW
-    * @Date:
-    */
+     * @Description: 管理员接口 修改网站信息
+     * @Param: [websiteConfigDto]
+     * @return: com.yw.ojproject.dto.ReturnData
+     * @Author: YW
+     * @Date:
+     */
     @SuperadminRequired
     @PostMapping("/admin/website")
     public ReturnData adminPostWebsite(@RequestBody WebsiteConfigDto websiteConfigDto) throws IOException {
@@ -77,16 +78,15 @@ public class ConfigController {
     }
 
     /**
-    * @Description: 管理员接口 获取smtp信息
-    * @Param: []
-    * @return: com.yw.ojproject.dto.ReturnData
-    * @Author: YW
-    * @Date:
-    */
+     * @Description: 管理员接口 获取smtp信息
+     * @Param: []
+     * @return: com.yw.ojproject.dto.ReturnData
+     * @Author: YW
+     * @Date:
+     */
     @SuperadminRequired
     @GetMapping("/admin/smtp")
-    public ReturnData adminGetSMTP()
-    {
+    public ReturnData adminGetSMTP() {
         Object ans = JsonUtils.ResolveJsonFileToObject("websmtp.json");
         return new ReturnData(null, ans);
     }
@@ -100,33 +100,27 @@ public class ConfigController {
     }
 
     /**
-    * @Description: 获取语言环境变量
-    * @Param: []
-    * @return: java.lang.Object
-    * @Author: YW
-    * @Date: 
-    */
+     * @Description: 获取语言环境变量
+     * @Param: []
+     * @return: java.lang.Object
+     * @Author: YW
+     * @Date:
+     */
     @GetMapping("/languages")
-    public Object languages()
-    {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("X-Judge-Server-Token", "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92");
-        httpHeaders.add("Content-Type","application/json");
-        Object result = restTemplate.postForObject("http://207.246.102.9:10086/language", new HttpEntity<String>(httpHeaders), Object.class);
+    public Object languages() {
+        Object result = RequestUtils.sendPostRequest("http://127.0.0.1:10088/language", null, "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92");
         return result;
     }
 
     /**
-    * @Description: 网站统计
-    * @Param: []
-    * @return: com.yw.ojproject.dto.ReturnData
-    * @Author: YW
-    * @Date: 
-    */
+     * @Description: 网站统计
+     * @Param: []
+     * @return: com.yw.ojproject.dto.ReturnData
+     * @Author: YW
+     * @Date:
+     */
     @GetMapping("/admin/dashboard_info")
-    public ReturnData dashBoardInfo()
-    {
+    public ReturnData dashBoardInfo() {
         DashBoardInfoDto info = new DashBoardInfoDto();
         info.getEnv().put("FORCE_HTTPS", false);
         info.getEnv().put("STATIC_CDN_HOST", "");
@@ -134,50 +128,91 @@ public class ConfigController {
     }
 
     /**
-    * @Description: 网站动态信息
-    * @Param: []
-    * @return: com.yw.ojproject.dto.ReturnData
-    * @Author: YW
-    * @Date: 
-    */
+     * @Description: 网站动态信息
+     * @Param: []
+     * @return: com.yw.ojproject.dto.ReturnData
+     * @Author: YW
+     * @Date:
+     */
     @SuperadminRequired
     @GetMapping("/admin/versions")
-    public ReturnData versions()
-    {
+    public ReturnData versions() {
         return new ReturnData(null, new WebSiteVersionDto());
     }
 
 
     /**
-    * @Description: 获取测试用例
-    * @Param: []
-    * @return: com.yw.ojproject.dto.ReturnData
-    * @Author: YW
-    * @Date:
-    */
+     * @Description: 获取测试用例
+     * @Param: []
+     * @return: com.yw.ojproject.dto.ReturnData
+     * @Author: YW
+     * @Date:
+     */
     @SuperadminRequired
     @GetMapping("/admin/prune_test_case")
-    public ReturnData adminGetTestCase()
-    {
+    public ReturnData adminGetTestCase() {
         return configServer.getAllTestCase();
     }
 
     /**
-    * @Description: 管理员接口 删除测试文件
-    * @Param: [id]
-    * @return: com.yw.ojproject.dto.ReturnData
-    * @Author: YW
-    * @Date: 
-    */
+     * @Description: 管理员接口 删除测试文件
+     * @Param: [id]
+     * @return: com.yw.ojproject.dto.ReturnData
+     * @Author: YW
+     * @Date:
+     */
     @SuperadminRequired
     @DeleteMapping("/admin/prune_test_case")
-    public ReturnData adminDelTestCase(@RequestParam String id)
-    {
+    public ReturnData adminDelTestCase(@RequestParam String id) {
         return configServer.delTestCase(id);
     }
 
 
+    /**
+     * @Description: judgerserver心跳包响应
+     * @Param: [heartBeatBo, httpServletRequest]
+     * @return: com.yw.ojproject.dto.ReturnData
+     * @Author: YW
+     * @Date:
+     */
+    @PostMapping("/judge_server_heartbeat")
+    public ReturnData handleHeartbeat(@RequestBody HeartBeatBo heartBeatBo, HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("X-JUDGE-SERVER-TOKEN");
+        if (token == null || token.compareTo("") == 0) {
+            return new ReturnData("error", "Invaild Token");
+        }
+        String ip = IpUtils.getIpAddr(httpServletRequest);
+        return judgeServerServer.handleHeartbeat(heartBeatBo, token, ip);
+    }
 
+    /**
+     * @Description: 获取评测服务器列表
+     * @Param: []
+     * @return: com.yw.ojproject.dto.ReturnData
+     * @Author: YW
+     * @Date:
+     */
+    @SuperadminRequired
+    @GetMapping("/admin/judge_server")
+    public ReturnData adminGetServer() {
+        return judgeServerServer.getJudgeServer();
+    }
 
+    @SuperadminRequired
+    @DeleteMapping("/admin/judge_server")
+    public ReturnData adminDelServer(@RequestParam String hostname) {
+        return judgeServerServer.delJudgeServer(hostname);
+    }
 
+    @SuperadminRequired
+    @PutMapping("/admin/judge_server")
+    public ReturnData adminPutServer(@RequestBody Map<String, String> params)
+    {
+        Boolean disabled = false;
+        if(params.get("is_disabled").compareTo("true") == 0)
+        {
+            disabled = true;
+        }
+        return judgeServerServer.putJudgeServer(params.get("id"), disabled);
+    }
 }
