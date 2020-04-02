@@ -1,6 +1,7 @@
 package com.yw.ojproject.dao;
 
 import com.yw.ojproject.entity.Problem;
+import com.yw.ojproject.entity.ProblemTag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -24,4 +25,13 @@ public interface ProblemDao extends JpaSpecificationExecutor<Problem>, JpaReposi
     * @Date: 
     */
     Problem findByidAndVisibleTrue(Integer id);
+    
+    /**
+    * @Description: 通过tag查找
+    * @Param: [tag]
+    * @return: java.util.List<com.yw.ojproject.entity.Problem>
+    * @Author: YW
+    * @Date: 
+    */
+    List<Problem> findAllByTags(ProblemTag tag);
 }

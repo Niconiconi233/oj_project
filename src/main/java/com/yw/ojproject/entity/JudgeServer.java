@@ -40,7 +40,7 @@ public class JudgeServer {
     @Id
     @GeneratedValue(generator = "guidGenerator")
     @GenericGenerator(name = "guidGenerator", strategy = "uuid")
-    @Column(name = "ID", unique = true, nullable = true, length = 32)
+    @Column(name = "ID", unique = true, nullable = false, length = 32)
     private String id;
 
     @Column(name = "HOSTNAME", length = 32)

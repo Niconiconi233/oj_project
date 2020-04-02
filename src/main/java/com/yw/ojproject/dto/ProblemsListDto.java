@@ -31,6 +31,17 @@ public class ProblemsListDto {
         }
         total = p.getTotalElements();
     }
+    public ProblemsListDto(List<Problem> p, Integer size, Integer offset)
+    {
+        results = new LinkedList<>();
+        while(offset < p.size())
+        {
+            results.add(new ProblemsDto(p.get(offset)));
+            ++offset;
+        }
+        Integer s = p.size();
+        total = s.longValue();
+    }
     private List<ProblemsDto> results;
     private Long total;
 }

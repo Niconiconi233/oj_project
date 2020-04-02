@@ -40,7 +40,7 @@ public class ProblemBo {
 
     private Boolean visible;
 
-    private Boolean share_subission;
+    private Boolean share_submission;
 
     private List<String> tags;
 
@@ -52,7 +52,7 @@ public class ProblemBo {
 
     private Boolean spj;
 
-    private String spj_languages;
+    private String spj_language;
 
     private String spj_code;
 

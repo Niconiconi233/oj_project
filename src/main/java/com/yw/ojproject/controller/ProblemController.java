@@ -8,17 +8,18 @@ import com.yw.ojproject.dto.AdminProblemDto;
 import com.yw.ojproject.dto.ProblemsListDto;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.Problem;
+import com.yw.ojproject.entity.ProblemTag;
 import com.yw.ojproject.service.ProblemServer;
+import com.yw.ojproject.service.ProblemTagServer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +34,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class ProblemController extends BaseController<Problem> {
+
+    @Autowired
+    private ProblemTagServer problemTagServer;
 
     private ProblemServer problemServer;
 
@@ -76,7 +80,6 @@ public class ProblemController extends BaseController<Problem> {
         Map<String, String> args = new LinkedHashMap<>();
         args.put("page", params.get("page"));
         args.put("size", params.get("limit"));
-        //args.put("visible_eq", "true");
         //按难度获取
         if(params.containsKey("difficulty"))
         {
@@ -97,11 +100,11 @@ public class ProblemController extends BaseController<Problem> {
         //通过tag获取
         if(params.containsKey("tag"))
         {
-            String tag = params.get("difficulty");
-            args.put("tags_in", tag);
-            Page<Problem> result = findAllPageByParams(args);
-            problemServer._add_problem_status(result.getContent(), httpServletRequest);
-            return new ReturnData(null, new ProblemsListDto(result));
+            String tag = params.get("tag");
+            ProblemTag problemTag = problemTagServer.findTagByName(tag);
+            List<Problem> res = problemServer.findByTag(problemTag);
+            problemServer._add_problem_status(res, httpServletRequest);
+            return new ReturnData(null, new ProblemsListDto(res, Integer.valueOf(params.get("limit")), Integer.valueOf(params.get("offset"))));
         }
 
         //通过keyword获取
@@ -134,7 +137,6 @@ public class ProblemController extends BaseController<Problem> {
             return problemServer.findById(Integer.valueOf(params.get("id")));
         }
         Map<String, String> args = new LinkedHashMap<>();
-        //args.put("page", params.get("page"));
         args.put("size", params.get("limit"));
         args.put("sort","time,DESC");
         //通过keyword获取

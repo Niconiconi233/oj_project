@@ -1,6 +1,7 @@
 package com.yw.ojproject.service;
 
 import com.yw.ojproject.dto.ReturnData;
+import com.yw.ojproject.entity.ProblemTag;
 
 public interface ProblemTagServer {
     /**
@@ -11,6 +12,15 @@ public interface ProblemTagServer {
     * @Date:
     */
     public ReturnData getProblemTag();
+    
+    /**
+    * @Description: 通过name获取tag
+    * @Param: [name]
+    * @return: com.yw.ojproject.entity.ProblemTag
+    * @Author: YW
+    * @Date: 
+    */
+    public ProblemTag findTagByName(String name);
 
 
 }

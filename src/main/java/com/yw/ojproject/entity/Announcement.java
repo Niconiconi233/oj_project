@@ -23,7 +23,6 @@ public class Announcement {
 
     public Announcement(AnnouncementBo announcementBo)
     {
-        this.id = System.currentTimeMillis()%1000000;
         this.title = announcementBo.getTitle();
         this.content = announcementBo.getContent();
         this.visible = announcementBo.getVisible();
@@ -32,7 +31,8 @@ public class Announcement {
     }
 
     @Id
-    @Column(name = "ID", unique = true, nullable = true, length = 32)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID", unique = true, nullable = false, length = 32)
     private Long id;
 
     @Column(name = "TITLE")
@@ -44,7 +44,7 @@ public class Announcement {
     @Column(name = "CREATE_TIME")
     private Date create_time;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CREATE_BY", referencedColumnName = "ID")
     private User create_by;
 

@@ -43,9 +43,9 @@ public class Problem {
             this.difficulty = ProblemDifficulty.MID.getCode();
         }
         this.visible = problemBo.getVisible();
-        this.share_submission = problemBo.getShare_subission();
+        this.share_submission = problemBo.getShare_submission();
         this.spj = problemBo.getSpj();
-        this.spj_language = problemBo.getSpj_languages();
+        this.spj_language = problemBo.getSpj_language();
         this.spj_code = problemBo.getSpj_code();
         this.spj_compile_ok = problemBo.getSpj_compile_ok();
         this.test_case_id = problemBo.getTest_case_id();
@@ -65,8 +65,7 @@ public class Problem {
     }
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", unique = true, nullable = true, length = 32)
+    @Column(name = "ID", unique = true, nullable = false, length = 32)
     private Integer id;
 
     //@Column(name = "contest")
@@ -111,7 +110,7 @@ public class Problem {
     @Column(name = "LAST_UPDATE_TIME")
     private Date last_update_time = new Date();
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CREATE_BY", referencedColumnName = "ID")
     private User create_by;
 

@@ -330,7 +330,7 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
     {
         if(problemBo.getSpj())
         {
-            if(!problemBo.getSpj_languages().isEmpty() && !problemBo.getSpj_code().isEmpty())
+            if(problemBo.getSpj_language().isEmpty() || problemBo.getSpj_code().isEmpty())
             {
                 return "Invaild_spj";
             }
@@ -338,11 +338,11 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
             {
                 return "SPJ code must be compiled successfully";
             }
-            String data = problemBo.getSpj_languages() + problemBo.getSpj_code();
+            String data = problemBo.getSpj_language() + problemBo.getSpj_code();
             problemBo.setSpj_version(DigestUtils.md5DigestAsHex(data.getBytes()));
         }else
         {
-            problemBo.setSpj_languages(null);
+            problemBo.setSpj_language(null);
             //params.put("spj_language", null);
             problemBo.setSpj_code(null);
             //params.put("spj_code", null);
@@ -446,6 +446,7 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
         {
             return new ReturnData("error", "no oj server avaliable");
         }
+        System.out.println(spj_version);
         Map<String, Object> params = new HashMap<>();
         params.put("spj_version", spj_version);
         params.put("src", compileSPJBo.getSpj_code());
@@ -464,5 +465,11 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
             ans.setError("error");
         }
         return ans;
+    }
+
+    @Override
+    public List<Problem> findByTag(ProblemTag problemTag)
+    {
+        return problemDao.findAllByTags(problemTag);
     }
 }

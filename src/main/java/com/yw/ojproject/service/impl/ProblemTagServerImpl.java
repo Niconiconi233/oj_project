@@ -31,4 +31,10 @@ public class ProblemTagServerImpl implements ProblemTagServer {
         List<ProblemTag> list = problemTagDao.findAll();
         return new ReturnData(null, list);
     }
+
+    @Override
+    public ProblemTag findTagByName(String name)
+    {
+        return problemTagDao.findByName(name);
+    }
 }
