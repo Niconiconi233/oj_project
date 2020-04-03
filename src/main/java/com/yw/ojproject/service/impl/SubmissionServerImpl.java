@@ -1,5 +1,6 @@
 package com.yw.ojproject.service.impl;
 
+import com.yw.ojproject.bo.JudgeStatus;
 import com.yw.ojproject.dao.ProblemDao;
 import com.yw.ojproject.dao.SubmissionDao;
 import com.yw.ojproject.dto.ReturnData;
@@ -12,11 +13,14 @@ import com.yw.ojproject.service.SubmissionServer;
 import com.yw.ojproject.utils.CookieUtils;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RedisUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +38,14 @@ import java.util.Map;
 public class SubmissionServerImpl extends BaseServerImpl<Submission> implements SubmissionServer {
 
     @Autowired
-    RedisUtils redisUtils;
+    private RedisUtils redisUtils;
 
-    //@Autowired
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private Environment environment;
+
     private SubmissionDao submissionDao;
 
     @Autowired
@@ -49,7 +58,7 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
     }
 
     @Override
-    public ReturnData postSubmission(Map<String, Object> params, HttpServletRequest httpServletRequest) {
+    public ReturnData postSubmission(Map<String, Object> params, HttpServletRequest httpServletRequest) throws UnsupportedEncodingException {
         Problem problem = problemDao.findById((Integer) params.get("problem_id")).orElse(null);
         if (problem == null) {
             return new ReturnData("error", "no such problem");
@@ -62,9 +71,11 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
         User user = JsonUtils.jsonStringToObject((String) redisUtils.get(cookie.getValue()), User.class);
         Submission submission = new Submission(user, problem, (String) params.get("language"), (String) params.get("code"), "");
         submissionDao.save(submission);
+        rabbitTemplate.setExchange(environment.getProperty("judge.exchange.name"));
+        rabbitTemplate.setRoutingKey(environment.getProperty("judge.routing.key.name"));
+        rabbitTemplate.convertAndSend(submission.getId());
         Map<String, String> ans = new LinkedHashMap<>();
         ans.put("submission_id", submission.getId());
-        //TODO 添加进任务队列
         return new ReturnData(null, ans);
     }
 
@@ -121,5 +132,19 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
         }
         List<Submission> list = submissionDao.findAllByUserOrderByCtimeDesc(user);
         return new ReturnData(null, new SubmissionListDto(list, offset, size));
+    }
+
+    @Override
+    public ReturnData submissionExists(Integer porblemId, HttpServletRequest httpServletRequest)
+    {
+        Problem p = problemDao.findById(porblemId).orElse(null);
+        Cookie cookie = CookieUtils.get(httpServletRequest, "csrftoken");
+        User user = JsonUtils.jsonStringToObject((String) redisUtils.get(cookie.getValue()), User.class);
+        Integer cnt = submissionDao.countByProblemAndUserAndResultEquals(p, user, JudgeStatus.ACCEPTED.getCode());
+        if(cnt == 0)
+        {
+            return new ReturnData(null, false);
+        }
+        return new ReturnData(null, true);
     }
 }

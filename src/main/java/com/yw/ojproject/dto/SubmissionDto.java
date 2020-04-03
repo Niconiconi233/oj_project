@@ -30,9 +30,7 @@ public class SubmissionDto {
         this.user_id = submission.getUser().getId();
         this.username = submission.getUser().getUsername();
         this.code = submission.getCode();
-        //TODO
-        //this.result = submission.getResult().getCode();
-        this.result = JudgeStatus.ACCEPTED.getCode();
+        this.result = submission.getResult();
         this.info = JsonUtils.jsonStringToObject(submission.getInfo(), ReturnData.class);
         this.language = submission.getLanguage();
         this.statistic_info = JsonUtils.jsonStringToObject(submission.getStatistic_info(), Map.class);

@@ -4,6 +4,7 @@ import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.Submission;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 /**
@@ -24,7 +25,7 @@ public interface SubmissionServer extends BaseServer<Submission> {
     * @Author: YW
     * @Date: 
     */
-    public ReturnData postSubmission(Map<String, Object> params, HttpServletRequest httpServletRequest);
+    public ReturnData postSubmission(Map<String, Object> params, HttpServletRequest httpServletRequest) throws UnsupportedEncodingException;
     
     /**
     * @Description: 获取submission
@@ -61,4 +62,14 @@ public interface SubmissionServer extends BaseServer<Submission> {
     * @Date:
     */
     public ReturnData getSubmissionByUser(Integer offset, Integer size, HttpServletRequest httpServletRequest);
+
+
+    /**
+    * @Description: 查询是否存在提交记录
+    * @Param: [porblemId, httpServletRequest]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
+    public ReturnData submissionExists(Integer porblemId, HttpServletRequest httpServletRequest);
 }

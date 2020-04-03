@@ -37,7 +37,7 @@ public class ProblemsDto {
             this.tags.add(tmp.getName());
         }
         this.created_by = new UserSimpleDto(problem.getCreate_by().getId(), problem.getCreate_by().getUsername(), null);
-        this.templates = JsonUtils.jsonStringToObject(problem.getTemplates(), String.class);
+        this.template = JsonUtils.jsonStringToObject(problem.getTemplates(), String.class);
         this.title = problem.getTitle();
         this.description = problem.getDescription();
         this.input_description = problem.getInput_description();
@@ -68,7 +68,7 @@ public class ProblemsDto {
     private Integer id;
     private List<String> tags;
     private UserSimpleDto created_by;
-    private Object templates;
+    private Object template;
     private String title;
     private String description;
     private String input_description;

@@ -26,4 +26,13 @@ public interface SubmissionDao extends JpaRepository<Submission, String>, JpaSpe
     * @Date: 
     */
     List<Submission> findAllByUserOrderByCtimeDesc(User user);
+    
+    /**
+    * @Description: 通过问题和用户查询
+    * @Param: [problem, user]
+    * @return: com.yw.ojproject.entity.Submission
+    * @Author: YW
+    * @Date: 
+    */
+    Integer countByProblemAndUserAndResultEquals(Problem problem, User user, Integer result);
 }

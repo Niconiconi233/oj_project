@@ -1,16 +1,19 @@
 package com.yw.ojproject.controller;
-import	java.util.LinkedHashMap;
 
 import com.yw.ojproject.aop.LoginRequired;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.SubmissionListDto;
 import com.yw.ojproject.entity.Submission;
 import com.yw.ojproject.service.SubmissionServer;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.yw.ojproject.utils.RequestUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,8 +40,7 @@ public class SubmissionController extends BaseController<Submission> {
 
     @LoginRequired
     @PostMapping("/submission")
-    public ReturnData submission(@RequestBody Map<String, Object> param, HttpServletRequest httpServletRequest)
-    {
+    public ReturnData submission(@RequestBody Map<String, Object> param, HttpServletRequest httpServletRequest) throws UnsupportedEncodingException {
         return submissionServer.postSubmission(param, httpServletRequest);
     }
 
@@ -117,5 +119,12 @@ public class SubmissionController extends BaseController<Submission> {
         }
         Page<Submission> tmp = findAllPageByParams(args);
         return new ReturnData(null, new SubmissionListDto(tmp));
+    }
+
+    @LoginRequired
+    @GetMapping("/submission_exists")
+    public ReturnData submissionExists(@RequestParam Integer problem_id, HttpServletRequest httpServletRequest)
+    {
+        return submissionServer.submissionExists(problem_id, httpServletRequest);
     }
 }

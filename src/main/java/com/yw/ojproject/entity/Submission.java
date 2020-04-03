@@ -9,7 +9,6 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 /**
 * @program: ojproject
