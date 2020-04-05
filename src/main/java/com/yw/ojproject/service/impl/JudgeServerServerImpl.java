@@ -7,6 +7,7 @@ import com.yw.ojproject.dto.JudgeServerListDto;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.JudgeServer;
 import com.yw.ojproject.service.JudgeServerServer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.List;
 *
 * @create: 2020-03-14 16:28
 **/
+@Slf4j
 @Service
 public class JudgeServerServerImpl implements JudgeServerServer {
 
@@ -90,6 +92,8 @@ public class JudgeServerServerImpl implements JudgeServerServer {
     public JudgeServer chooseJudgeServer()
     {
         List<JudgeServer> res = judgeServerDao.findAllByDisabledFalseOrderByTasknumberAsc();
+        Integer size = new Integer(res.size());
+        log.info("choose server : " + size.toString());
         for(JudgeServer j : res)
         {
             if(j.status().compareTo("normal") == 0)

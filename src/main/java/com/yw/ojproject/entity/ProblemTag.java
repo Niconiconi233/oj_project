@@ -1,9 +1,12 @@
 package com.yw.ojproject.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
 * @program: ojproject
@@ -27,4 +30,8 @@ public class ProblemTag {
 
     @Column(name = "NAME")
     private String name;
+
+    @JSONField(serialize = false)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "tags", targetEntity = Problem.class)
+    private List<Problem> problems;
 }

@@ -3,11 +3,12 @@ package com.yw.ojproject.service.impl;
 import com.yw.ojproject.bo.JudgeStatus;
 import com.yw.ojproject.bo.ProblemIOModeBo;
 import com.yw.ojproject.bo.ProblemRuleType;
+import com.yw.ojproject.dao.ProblemDao;
 import com.yw.ojproject.dao.SubmissionDao;
+import com.yw.ojproject.dao.UserProfileDao;
 import com.yw.ojproject.dto.ReturnData;
-import com.yw.ojproject.entity.JudgeServer;
-import com.yw.ojproject.entity.Problem;
-import com.yw.ojproject.entity.Submission;
+import com.yw.ojproject.dto.VoProblems;
+import com.yw.ojproject.entity.*;
 import com.yw.ojproject.service.DispatcherServer;
 import com.yw.ojproject.service.JudgeServerServer;
 import com.yw.ojproject.utils.JsonUtils;
@@ -52,6 +53,13 @@ public class DispatcherServerImpl implements DispatcherServer {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private ProblemDao problemDao;
+
+    @Autowired
+    private UserProfileDao userProfileDao;
+
+    //FIXME 优化结构
     @Override
     public void judge(String id)
     {
@@ -63,10 +71,12 @@ public class DispatcherServerImpl implements DispatcherServer {
             return;
         }
         Problem problem = submission.getProblem();
+        problem.add_submission_number();
         JudgeServer judgeServer = judgeServerServer.chooseJudgeServer();
         if(judgeServer == null)
         {
             //没有服务器的情况下，再次放入队列中
+            log.warn("judgeServer is null");
             rabbitTemplate.setExchange(environment.getProperty("judge.exchange.name"));
             rabbitTemplate.setRoutingKey(environment.getProperty("judge.routing.key.name"));
             rabbitTemplate.convertAndSend(id);
@@ -75,7 +85,7 @@ public class DispatcherServerImpl implements DispatcherServer {
         params.put("language_type", LanguageUtils.getLanguageType(submission.getLanguage()));
         params.put("src", submission.getCode());
         params.put("max_cpu_time", problem.getTime_limit());
-        params.put("max_memory", problem.getMemory_limit());
+        params.put("max_memory", problem.getMemory_limit() * 1024 * 1024);
         params.put("test_case_id", problem.getTest_case_id());
         //TODO 是否需要输出
         params.put("output", false);
@@ -94,7 +104,6 @@ public class DispatcherServerImpl implements DispatcherServer {
             submissionDao.save(submission);
             return;
         }
-        List<Map<String, Object>> data = (List<Map<String, Object>>) ret.getData();
         //发生错误
         if(ret.getError() != null)
         {
@@ -105,12 +114,16 @@ public class DispatcherServerImpl implements DispatcherServer {
             submission.setStatistic_info(JsonUtils.objectToJson(tmp));
         }else
         {
+            List<Map<String, Object>> data = (List<Map<String, Object>>) ret.getData();
             submission.setInfo(JsonUtils.objectToJson(ret));
-            //TODO 更新static_info
+            int max_cpu = 0;
+            int max_mem = 0;
             for(Map<String, Object> m : data)
             {
                 //ACM模式下,多个测试点全部正确则AC，否则取第一个错误的测试点的状态
                 //OI模式下, 若多个测试点全部正确则AC， 若全部错误则取第一个错误测试点状态，否则为部分正确
+                max_cpu = Math.max((int) m.get("cpu_time"), max_cpu);
+                max_mem = Math.max((int)m.get("memory"), max_mem);
                 if(((int)m.get("result")) != 0)
                 {
                     if(problem.getRule_type() == ProblemRuleType.ACM)
@@ -125,9 +138,43 @@ public class DispatcherServerImpl implements DispatcherServer {
                         return;
                     }
                 }
+                //AC了
+                problem.add_ac_number();
+                Map<String, Integer> static_info = JsonUtils.jsonStringToObject(submission.getStatistic_info(), Map.class);
+                static_info.put("time_cost", max_cpu);
+                static_info.put("memory_cost", max_mem / 1024 / 1024);
+                submission.setStatistic_info(JsonUtils.objectToJson(static_info));
             }
             submission.setResult(JudgeStatus.ACCEPTED.getCode());
         }
+        User user = submission.getUser();
+        UserProfile userProfile = userProfileDao.findByUser(user);
+        if(problem.getRule_type() == ProblemRuleType.ACM)
+        {
+            Map<String, VoProblems> map = JsonUtils.jsonStringToObject(userProfile.getAcm_problems_status(), Map.class);
+            map.put(problem.getId().toString(), new VoProblems(problem.getId().toString(), 0, submission.getResult()));
+            userProfile.setAcm_problems_status(JsonUtils.objectToJson(map));
+        }else
+        {
+            Map<String, VoProblems> map = JsonUtils.jsonStringToObject(userProfile.getIo_problems_status(), Map.class);
+            map.put(problem.getId().toString(), new VoProblems(problem.getId().toString(), 0, submission.getResult()));
+            userProfile.setIo_problems_status(JsonUtils.objectToJson(map));
+        }
+        userProfile.setSubmissionnumber(userProfile.getSubmissionnumber() + 1);
+        //FIXME 先默认AC
+        userProfile.setAcceptnumber(userProfile.getAcceptnumber() + 1);
+        userProfileDao.save(userProfile);
+        Map<String, Integer> status = JsonUtils.jsonStringToObject(problem.getStatistic_info(), Map.class);
+        Integer tmp = status.get(submission.getResult());
+        if(tmp == null)
+        {
+            status.put(submission.getResult().toString(), 1);
+        }else
+        {
+            status.put(submission.getResult().toString(), tmp + 1);
+        }
+        problem.setStatistic_info(JsonUtils.objectToJson(status));
+        problemDao.save(problem);
         submissionDao.save(submission);
     }
 }

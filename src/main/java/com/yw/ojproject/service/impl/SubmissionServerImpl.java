@@ -70,6 +70,7 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
         Cookie cookie = CookieUtils.get(httpServletRequest, "csrftoken");
         User user = JsonUtils.jsonStringToObject((String) redisUtils.get(cookie.getValue()), User.class);
         Submission submission = new Submission(user, problem, (String) params.get("language"), (String) params.get("code"), "");
+        //发送到消息队列中
         submissionDao.save(submission);
         rabbitTemplate.setExchange(environment.getProperty("judge.exchange.name"));
         rabbitTemplate.setRoutingKey(environment.getProperty("judge.routing.key.name"));

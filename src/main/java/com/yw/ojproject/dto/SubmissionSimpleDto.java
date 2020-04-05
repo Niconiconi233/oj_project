@@ -26,7 +26,7 @@ public class SubmissionSimpleDto {
     {
         this.id = submission.getId();
         this.problem = submission.getProblem().getId().toString();
-        this.show_link = false;
+        this.show_link = true;
         this.create_time = submission.getCtime();
         this.user_id = submission.getUser().getId();
         this.username = submission.getUsername();

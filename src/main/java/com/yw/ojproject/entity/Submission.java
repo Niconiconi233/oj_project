@@ -5,6 +5,8 @@ import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.utils.JsonUtils;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -43,6 +45,7 @@ public class Submission {
     private String id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "PROBLEM_ID", referencedColumnName = "ID")
     private Problem problem;
 
@@ -50,6 +53,7 @@ public class Submission {
     private Date ctime;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
     private User user;
 
@@ -62,7 +66,7 @@ public class Submission {
     @Column(name = "RESULT")
     private Integer result = JudgeStatus.PENDING.getCode();
 
-    @Column(name = "INFO")
+    @Column(name = "INFO", length = 2048)
     private String info = JsonUtils.objectToJson(new ReturnData());
 
     @Column(name = "LANGUAGE")
@@ -71,7 +75,7 @@ public class Submission {
     @Column(name = "SHARED")
     private Boolean shared = false;
 
-    @Column(name = "STATISTIC_INFO")
+    @Column(name = "STATISTIC_INFO", length = 2048)
     private String statistic_info = JsonUtils.objectToJson(new HashMap<String, Object>());
 
     @Column(name = "IP")

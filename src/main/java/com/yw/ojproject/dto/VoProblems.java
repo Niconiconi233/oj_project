@@ -17,9 +17,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VoProblems {
-    private Integer id;
+    private String _id;
     private Integer score;
-    private String status;
-
+    private Integer status;
 }
 

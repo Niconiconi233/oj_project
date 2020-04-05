@@ -2,6 +2,8 @@ package com.yw.ojproject.entity;
 
 import com.yw.ojproject.bo.AnnouncementBo;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -45,6 +47,7 @@ public class Announcement {
     private Date create_time;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "CREATE_BY", referencedColumnName = "ID")
     private User create_by;
 

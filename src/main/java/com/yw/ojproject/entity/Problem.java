@@ -1,11 +1,15 @@
 package com.yw.ojproject.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yw.ojproject.bo.ProblemBo;
 import com.yw.ojproject.bo.ProblemDifficulty;
 import com.yw.ojproject.bo.ProblemRuleType;
 import com.yw.ojproject.dto.AdminProblemDto;
 import com.yw.ojproject.utils.JsonUtils;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -95,7 +99,7 @@ public class Problem {
     @Column(name = "TEST_CASE_SCORE", length = 512)
     private String test_case_score;
 
-    @Column(name = "HINT")
+    @Column(name = "HINT", length = 2048)
     private String hint;
 
     @Column(name = "LANGUAGES")
@@ -110,7 +114,8 @@ public class Problem {
     @Column(name = "LAST_UPDATE_TIME")
     private Date last_update_time = new Date();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "CREATE_BY", referencedColumnName = "ID")
     private User create_by;
 
@@ -147,8 +152,11 @@ public class Problem {
     @Column(name = "DIFFICULTY")
     private Integer difficulty;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "TAG_ID", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @JSONField(serialize = false)
+    @ManyToMany(cascade = {CascadeType.PERSIST}, targetEntity = ProblemTag.class, fetch = FetchType.EAGER)
+    @JoinTable(name = "PROBLEM_TAG",
+            joinColumns=@JoinColumn(name="PRO_ID", referencedColumnName="ID"),
+            inverseJoinColumns=@JoinColumn(name="TAG_ID", referencedColumnName="ID"))
     private List<ProblemTag> tags;
 
     @Column(name = "SOURCE")

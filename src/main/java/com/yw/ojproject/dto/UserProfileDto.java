@@ -42,8 +42,9 @@ public class UserProfileDto {
     private Integer id;
     private UserTotalDto user;
     private String real_name;
-    private Map<Integer, VoProblems> acm_problems_status;
-    private Map<Integer, VoProblems> io_problems_status;
+    //FIXME 是否可以不传递转态值
+    private Map<String, VoProblems> acm_problems_status;
+    private Map<String, VoProblems> io_problems_status;
     private String avatar;
     private String blog;
     private String mood;

@@ -89,7 +89,7 @@ public class ProblemsDto {
     private Integer total_score;
     private Integer submission_number;
     private Integer accepted_number;
-    private Map<Integer, Integer> statistic_info;
+    private Map<String, Integer> statistic_info;
     private Boolean share_submission;
     private String contest;
     private Integer my_status;
