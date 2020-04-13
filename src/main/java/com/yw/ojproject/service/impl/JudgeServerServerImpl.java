@@ -13,8 +13,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
 * @program: ojproject
@@ -35,26 +40,80 @@ public class JudgeServerServerImpl implements JudgeServerServer {
     @Autowired
     private Environment environment;
 
-    @Override
-    public ReturnData handleHeartbeat(HeartBeatBo heartBeatBo, String token, String ip)
+    private Lock lock = new ReentrantLock();
+
+    //保存的是活跃的服务器
+    static Map<String, JudgeServer> servers;
+    static
     {
-        JudgeServer judgeServer = judgeServerDao.findByHostname(heartBeatBo.getHostname());
-        if(judgeServer == null)//新server
+        servers = new HashMap<>();
+    }
+
+    @Override
+    public ReturnData handleHeartbeat(HeartBeatBo heartBeatBo, String token, String ip) throws InterruptedException {
+        //判断是否在map缓存中
+        if(servers.containsKey(heartBeatBo.getHostname()))
         {
-            judgeServer = new JudgeServer(heartBeatBo, ip, token);
-            judgeServerDao.save(judgeServer);
-            return new ReturnData();
-        }else
+            //尝试获取锁，如果没获取什么也不做，等待下一次
+            if(lock.tryLock(5, TimeUnit.SECONDS)) {
+                try {
+                    JudgeServer judgeServer = servers.get(heartBeatBo.getHostname());
+                    judgeServer.updateServer(heartBeatBo);
+                    servers.put(heartBeatBo.getHostname(), judgeServer);
+                    return new ReturnData();
+                }catch (Exception e)
+                {
+                    log.warn("throw Exception" + e.getMessage());
+                    throw e;
+                }finally {
+                    lock.unlock();
+                }
+            }else {
+                log.warn("get lock failed");
+            }
+        }else {
+            JudgeServer judgeServer = judgeServerDao.findByHostname(heartBeatBo.getHostname());
+            if (judgeServer == null)//新server
+            {
+                judgeServer = new JudgeServer(heartBeatBo, ip, token);
+                judgeServerDao.save(judgeServer);
+            }
+            if(lock.tryLock(5, TimeUnit.SECONDS)) {
+                try {
+                    servers.put(heartBeatBo.getHostname(), judgeServer);
+                    return new ReturnData();
+                }catch (Exception e)
+                {
+                    log.warn("throw Exception: " + e.getMessage());
+                    throw e;
+                }finally {
+                    lock.unlock();
+                }
+            }else
+            {
+                log.warn("get lock failed");
+            }
+        }
+        //未知错误
+        log.warn("unkown error");
+        return null;
+    }
+
+
+    @Override
+    public void flushServers()
+    {
+        for(JudgeServer server : servers.values())
         {
-         judgeServer.updateServer(heartBeatBo);
-         judgeServerDao.save(judgeServer);
-         return new ReturnData();
+            judgeServerDao.save(server);
         }
     }
 
     @Override
     public ReturnData getJudgeServer()
     {
+        //刷新缓存
+        flushServers();
         //TODO 排序
         List<JudgeServer> servers = judgeServerDao.findAll();
         List<JudgeServerDto> res = new LinkedList<>();
@@ -69,9 +128,21 @@ public class JudgeServerServerImpl implements JudgeServerServer {
 
     @Override
     @Transactional
-    public ReturnData delJudgeServer(String hostname)
-    {
+    public ReturnData delJudgeServer(String hostname) throws InterruptedException {
         judgeServerDao.deleteByHostname(hostname);
+        if(servers.containsKey(hostname))
+        {
+            lock.lock();
+            try{
+                servers.remove(hostname);
+            }catch (Exception e)
+            {
+                log.warn("catch Exception: " + e.getMessage());
+                throw e;
+            }finally {
+                lock.unlock();
+            }
+        }
         return new ReturnData(null, "success");
     }
 
@@ -85,27 +156,37 @@ public class JudgeServerServerImpl implements JudgeServerServer {
         }
         judgeServer.setDisabled(is_disbaled);
         judgeServerDao.save(judgeServer);
+        if(servers.containsKey(judgeServer.getHostname()))
+        {
+            lock.lock();
+            try {
+                servers.put(judgeServer.getHostname(), judgeServer);
+            }catch (Exception e)
+            {
+                log.warn("catch Exception: " + e.getMessage());
+                throw e;
+            }finally {
+                lock.unlock();
+            }
+        }
         return new ReturnData();
     }
 
     @Override
     public JudgeServer chooseJudgeServer()
     {
-        List<JudgeServer> res = judgeServerDao.findAllByDisabledFalseOrderByTasknumberAsc();
-        Integer size = new Integer(res.size());
-        log.info("choose server : " + size.toString());
-        for(JudgeServer j : res)
+        for(JudgeServer server : servers.values())
         {
-            if(j.status().compareTo("normal") == 0)
+            if(server.status().compareTo("normal") == 0)
             {
-                if(j.getTasknumber() <= j.getCpu_core() * 2)
+                if(server.getTasknumber() <= server.getCpu_core() * 2)
                 {
-                    j.setTasknumber(j.getTasknumber() + 1);
-                    judgeServerDao.save(j);
-                    return j;
+                    server.setTasknumber(server.getTasknumber() + 1);
+                    return server;
                 }
             }
         }
+        log.warn("can't find server");
         return null;
     }
 
@@ -113,7 +194,16 @@ public class JudgeServerServerImpl implements JudgeServerServer {
     public void releaseJudgeServer(JudgeServer judgeServer)
     {
         judgeServer.setTasknumber(judgeServer.getTasknumber() - 1);
-        judgeServerDao.save(judgeServer);
+        lock.lock();
+        try {
+            servers.put(judgeServer.getHostname(), judgeServer);
+        }catch (Exception e)
+        {
+            log.warn("catch Exception: " + e.getMessage());
+            throw e;
+        }finally {
+            lock.unlock();
+        }
     }
 
 }

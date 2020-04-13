@@ -22,7 +22,7 @@ public interface JudgeServerServer {
     * @Author: YW
     * @Date:
     */
-    public ReturnData handleHeartbeat(HeartBeatBo heartBeatBo, String token, String ip);
+    public ReturnData handleHeartbeat(HeartBeatBo heartBeatBo, String token, String ip) throws InterruptedException;
 
     /**
     * @Description: 获取全部评测服务器
@@ -41,7 +41,7 @@ public interface JudgeServerServer {
     * @Author: YW
     * @Date: 
     */
-    public ReturnData delJudgeServer(String hostname);
+    public ReturnData delJudgeServer(String hostname) throws InterruptedException;
 
     /**
     * @Description: 修改评测服务器
@@ -70,4 +70,13 @@ public interface JudgeServerServer {
     * @Date:
     */
     public void releaseJudgeServer(JudgeServer judgeServer);
+    
+    /**
+    * @Description: 将map中的server保存到数据库中
+    * @Param: []
+    * @return: void
+    * @Author: YW
+    * @Date: 
+    */
+    public void flushServers();
 }

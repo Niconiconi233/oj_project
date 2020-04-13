@@ -176,7 +176,7 @@ public class ConfigController {
      * @Date:
      */
     @PostMapping("/judge_server_heartbeat")
-    public ReturnData handleHeartbeat(@RequestBody HeartBeatBo heartBeatBo, HttpServletRequest httpServletRequest) {
+    public ReturnData handleHeartbeat(@RequestBody HeartBeatBo heartBeatBo, HttpServletRequest httpServletRequest) throws InterruptedException {
         String token = httpServletRequest.getHeader("X-JUDGE-SERVER-TOKEN");
         if (token == null || token.compareTo("") == 0) {
             return new ReturnData("error", "Invaild Token");
@@ -200,7 +200,7 @@ public class ConfigController {
 
     @SuperadminRequired
     @DeleteMapping("/admin/judge_server")
-    public ReturnData adminDelServer(@RequestParam String hostname) {
+    public ReturnData adminDelServer(@RequestParam String hostname) throws InterruptedException {
         return judgeServerServer.delJudgeServer(hostname);
     }
 

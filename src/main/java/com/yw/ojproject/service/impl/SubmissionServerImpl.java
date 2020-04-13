@@ -9,11 +9,11 @@ import com.yw.ojproject.dto.SubmissionListDto;
 import com.yw.ojproject.entity.Problem;
 import com.yw.ojproject.entity.Submission;
 import com.yw.ojproject.entity.User;
+import com.yw.ojproject.judge.Dispatcher;
 import com.yw.ojproject.service.SubmissionServer;
 import com.yw.ojproject.utils.CookieUtils;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RedisUtils;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -40,16 +40,19 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
     @Autowired
     private RedisUtils redisUtils;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+    //@Autowired
+    //private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private Environment environment;
 
-    private SubmissionDao submissionDao;
-
     @Autowired
     private ProblemDao problemDao;
+
+    @Autowired
+    Dispatcher dispatcher;
+
+    private SubmissionDao submissionDao;
 
     public SubmissionServerImpl(SubmissionDao submissionDao)
     {
@@ -72,9 +75,14 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
         Submission submission = new Submission(user, problem, (String) params.get("language"), (String) params.get("code"), "");
         //发送到消息队列中
         submissionDao.save(submission);
-        rabbitTemplate.setExchange(environment.getProperty("judge.exchange.name"));
-        rabbitTemplate.setRoutingKey(environment.getProperty("judge.routing.key.name"));
-        rabbitTemplate.convertAndSend(submission.getId());
+        redisUtils.lPushR(environment.getProperty("judge.queue.name"), submission.getId());
+        dispatcher.processTask();
+
+        //弃用rabbitmq
+        //rabbitTemplate.setExchange(environment.getProperty("judge.exchange.name"));
+        //rabbitTemplate.setRoutingKey(environment.getProperty("judge.routing.key.name"));
+        //rabbitTemplate.convertAndSend(submission.getId());
+
         Map<String, String> ans = new LinkedHashMap<>();
         ans.put("submission_id", submission.getId());
         return new ReturnData(null, ans);

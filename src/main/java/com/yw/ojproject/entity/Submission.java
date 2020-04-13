@@ -60,7 +60,7 @@ public class Submission {
     @Column(name = "USERNAME")
     private String username;
 
-    @Column(name = "CODE")
+    @Column(name = "CODE", length = 4096)
     private String code;
 
     @Column(name = "RESULT")

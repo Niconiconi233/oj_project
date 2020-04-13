@@ -434,14 +434,31 @@ public class RedisUtils {
     }
 
     /**
-     * 将list放入缓存
+     * 将list放入缓存 右插
      * @param key 键
      * @param value 值
      * @return
      */
-    public boolean lSet(String key, Object value) {
+    public boolean lPushR(String key, Object value) {
         try {
             redisTemplate.opsForList().rightPush(key, value);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+    * @Description: 左插
+    * @Param: [key, value]
+    * @return: boolean
+    * @Author: YW
+    * @Date:
+    */
+    public boolean lPushL(String key, Object value) {
+        try {
+            redisTemplate.opsForList().leftPush(key, value);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -456,9 +473,29 @@ public class RedisUtils {
      * @param time 时间(秒)
      * @return
      */
-    public boolean lSet(String key, Object value, long time) {
+    public boolean lPushR(String key, Object value, long time) {
         try {
             redisTemplate.opsForList().rightPush(key, value);
+            if (time > 0) {
+                expire(key, time);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+    * @Description: 左插
+    * @Param: [key, value, time]
+    * @return: boolean
+    * @Author: YW
+    * @Date:
+    */
+    public boolean lPushL(String key, Object value, long time) {
+        try {
+            redisTemplate.opsForList().leftPush(key, value);
             if (time > 0) {
                 expire(key, time);
             }
@@ -536,6 +573,24 @@ public class RedisUtils {
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+
+    /**
+    * @Description: 左pop
+    * @Param: [key]
+    * @return: void
+    * @Author: YW
+    * @Date:
+    */
+    public Object lPopL(String key) {
+        try {
+            Object ans = redisTemplate.opsForList().leftPop(key);
+            return ans;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

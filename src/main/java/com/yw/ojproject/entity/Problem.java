@@ -172,7 +172,7 @@ public class Problem {
     private Integer accepted_number = 0;
 
     @Column(name = "STATISTIC_INFO")
-    private String statistic_info = JsonUtils.objectToJson(new HashMap<Integer, Integer>());
+    private String statistic_info = JsonUtils.objectToJson(new HashMap<String, Integer>());
 
     @Column(name = "SHARE_SUBMISSION")
     private Boolean share_submission = false;
@@ -227,10 +227,10 @@ public class Problem {
         this.total_score = adminProblemDto.getTotal_score();
         this.test_case_score = JsonUtils.listToJsonString(adminProblemDto.getTest_case_score());
         this.source = adminProblemDto.getSource();
-        this.total_score = adminProblemDto.getTotal_score();
-        this.submission_number = adminProblemDto.getSubmission_number();
-        this.accepted_number = adminProblemDto.getAccepted_number();
-        this.statistic_info = JsonUtils.objectToJson(adminProblemDto.getStatistic_info());
+        //this.total_score = adminProblemDto.getTotal_score();
+        //this.submission_number = adminProblemDto.getSubmission_number();
+        //this.accepted_number = adminProblemDto.getAccepted_number();
+        //this.statistic_info = JsonUtils.objectToJson(adminProblemDto.getStatistic_info());
     }
 
 }

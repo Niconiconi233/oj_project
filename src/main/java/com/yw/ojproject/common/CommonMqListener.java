@@ -1,6 +1,6 @@
 package com.yw.ojproject.common;
 
-import com.yw.ojproject.service.DispatcherServer;
+import com.yw.ojproject.judge.Dispatcher;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -16,14 +16,14 @@ import org.springframework.stereotype.Component;
 * @create: 2020-04-03 18:09
 **/
 @Component
-public class CommonMqListener {
+public class CommonMqListener{
 
     @Autowired
-    DispatcherServer dispatcherServer;
+    Dispatcher dispatcher;
 
     @RabbitListener(queues = "${judge.queue.name}")
     public void consumeJudgeQueue(@Payload String id)
     {
-        dispatcherServer.judge(id);
+        //dispatcher.judge(id);
     }
 }
