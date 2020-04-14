@@ -1,19 +1,17 @@
 package com.yw.ojproject.controller;
 
 import com.yw.ojproject.aop.LoginRequired;
+import com.yw.ojproject.aop.SuperadminRequired;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.SubmissionListDto;
 import com.yw.ojproject.entity.Submission;
 import com.yw.ojproject.service.SubmissionServer;
-import com.yw.ojproject.utils.RequestUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +27,6 @@ import java.util.Map;
 @RequestMapping("/api")
 public class SubmissionController extends BaseController<Submission> {
 
-    //@Autowired
     SubmissionServer submissionServer;
 
     public SubmissionController(SubmissionServer submissionServer)
@@ -126,5 +123,12 @@ public class SubmissionController extends BaseController<Submission> {
     public ReturnData submissionExists(@RequestParam Integer problem_id, HttpServletRequest httpServletRequest)
     {
         return submissionServer.submissionExists(problem_id, httpServletRequest);
+    }
+
+    @SuperadminRequired
+    @GetMapping("/admin/submission/rejudge")
+    public ReturnData submissionRejudge(@RequestParam String id)
+    {
+        return submissionServer.adminSubmissionRejudge(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.yw.ojproject.service;
 
+import com.yw.ojproject.bo.UserProfileBo;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.UserProfile;
 
@@ -42,6 +43,13 @@ public interface UserProfileServer extends BaseServer<UserProfile>  {
     * @Date:
     */
     public ReturnData userProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
-    
 
+    /**
+    * @Description: 修改信息
+    * @Param: [userProfileBo]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
+    public ReturnData modUserProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, UserProfileBo userProfileBo);
 }

@@ -69,8 +69,7 @@ public class UserController extends BaseController<User> {
     * @Date:
     */
     @PostMapping("/login")
-    public ReturnData userLogin(@RequestBody Map<String, String> args, HttpServletResponse httpResponse)
-    {
+    public ReturnData userLogin(@RequestBody Map<String, String> args, HttpServletResponse httpResponse) throws InterruptedException {
         return userServer.userLogin(args.get("username"), args.get("password"), httpResponse);
     }
 

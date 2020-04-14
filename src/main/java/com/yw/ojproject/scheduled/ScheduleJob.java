@@ -31,8 +31,7 @@ public class ScheduleJob {
     @Scheduled(fixedRate = ONE_Minute)
     public void writeServers()
     {
-        log.info("SCHEDULEJON::WRITESERVERS: flush cache");
+        log.info("flush cache");
         judgeServerServer.flushServers();
-
     }
 }

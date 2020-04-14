@@ -72,4 +72,14 @@ public interface SubmissionServer extends BaseServer<Submission> {
     * @Date:
     */
     public ReturnData submissionExists(Integer porblemId, HttpServletRequest httpServletRequest);
+    
+    
+    /**
+    * @Description: 管理员接口，重新评判
+    * @Param: [id]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
+    public ReturnData adminSubmissionRejudge(String id);
 }

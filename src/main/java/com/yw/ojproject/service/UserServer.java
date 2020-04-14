@@ -24,7 +24,7 @@ public interface UserServer extends BaseServer<User> {
     * @Author: YW
     * @Date:
     */
-    public ReturnData userLogin(String username, String password, HttpServletResponse httpResponse);
+    public ReturnData userLogin(String username, String password, HttpServletResponse httpResponse) throws InterruptedException;
 
     /**
     * @Description: 登出

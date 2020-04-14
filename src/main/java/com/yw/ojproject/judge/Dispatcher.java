@@ -20,6 +20,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,51 +59,45 @@ public class Dispatcher {
     private UserProfileDao userProfileDao;
 
     //FIXME 优化结构
+    @Transactional
     public void judge(String id)
     {
-        Map<String, Object> params = new HashMap<>();
         Submission submission = submissionDao.findById(id).orElse(null);
         if(submission == null)
         {
             log.warn("submission is null");
             return;
         }
-        Problem problem = submission.getProblem();
-        problem.add_submission_number();
+        //获取评测服务器
         JudgeServer judgeServer = judgeServerServer.chooseJudgeServer();
         if(judgeServer == null)
         {
             //没有服务器的情况下，再次放入队列中
             log.warn("judgeServer is null");
             redisUtils.lPushR(environment.getProperty("judge.queue.name"), id);
-            //rabbitTemplate.setExchange(environment.getProperty("judge.exchange.name"));
-            //rabbitTemplate.setRoutingKey(environment.getProperty("judge.routing.key.name"));
-            //rabbitTemplate.convertAndSend(id);
             return;
         }
-        params.put("language_type", LanguageUtils.getLanguageType(submission.getLanguage()));
-        params.put("src", submission.getCode());
-        params.put("max_cpu_time", problem.getTime_limit());
-        params.put("max_memory", problem.getMemory_limit() * 1024 * 1024);
-        params.put("test_case_id", problem.getTest_case_id());
-        //TODO 是否需要输出
-        params.put("output", false);
-        params.put("spj_version", problem.getSpj_version());
-        params.put("spj_src", problem.getSpj_code());
-        params.put("io_mode", JsonUtils.jsonStringToObject(problem.getIo_mode(), ProblemIOModeBo.class));
-        //更新状态
+
+        //此时条件具备
+        Problem problem = submission.getProblem();
+        problem.add_submission_number();
+        //更新评测状态
         submission.setResult(JudgeStatus.JUDGING.getCode());
         submissionDao.save(submission);
-        //TODO fix url
-        ReturnData ret = RequestUtils.sendPostRequest("http://127.0.0.1:10088/judge", params, judgeServer.getToken());
+        //发送请求
+        ReturnData ret = sendRequests(submission, problem, judgeServer);
         judgeServerServer.releaseJudgeServer(judgeServer);
         if(ret == null)
         {
-            submission.setResult(JudgeStatus.COMPILE_ERROR.getCode());
+            log.warn("the return data is null");
+            submission.setResult(JudgeStatus.SYSTEM_ERROR.getCode());
             submissionDao.save(submission);
+            problemDao.save(problem);
             return;
         }
+
         //发生错误
+        //这种情况下一般是编译出错
         if(ret.getError() != null)
         {
             submission.setResult(JudgeStatus.COMPILE_ERROR.getCode());
@@ -122,31 +117,41 @@ public class Dispatcher {
                 //OI模式下, 若多个测试点全部正确则AC， 若全部错误则取第一个错误测试点状态，否则为部分正确
                 max_cpu = Math.max((int) m.get("cpu_time"), max_cpu);
                 max_mem = Math.max((int)m.get("memory"), max_mem);
+                //其中一个测试用例有错
                 if(((int)m.get("result")) != 0)
                 {
                     if(problem.getRule_type() == ProblemRuleType.ACM)
                     {
                         submission.setResult((int)m.get("result"));
-                        submissionDao.save(submission);
-                        return;
                     }else
                     {
                         submission.setResult(JudgeStatus.PARTIALLY_ACCEPTED.getCode());
-                        submissionDao.save(submission);
-                        return;
                     }
                 }
-                //AC了
-                problem.add_ac_number();
-                Map<String, Integer> static_info = JsonUtils.jsonStringToObject(submission.getStatistic_info(), Map.class);
-                static_info.put("time_cost", max_cpu);
-                static_info.put("memory_cost", max_mem / 1024 / 1024);
-                submission.setStatistic_info(JsonUtils.objectToJson(static_info));
             }
-            submission.setResult(JudgeStatus.ACCEPTED.getCode());
+            Map<String, Integer> static_info = JsonUtils.jsonStringToObject(submission.getStatistic_info(), Map.class);
+            static_info.put("time_cost", max_cpu);
+            static_info.put("memory_cost", max_mem / 1024 / 1024);
+            submission.setStatistic_info(JsonUtils.objectToJson(static_info));
+            //没有任何错误发生 此时为AC状态
+            if(submission.getResult().equals(JudgeStatus.JUDGING.getCode())){
+                problem.add_ac_number();
+                submission.setResult(JudgeStatus.ACCEPTED.getCode());
+            }
         }
+        updateUserStatus(submission, problem);
+        updateProblemStatus(problem, submission);
+        submissionDao.save(submission);
+        processTask();
+    }
+
+
+    private void updateUserStatus(Submission submission, Problem problem)
+    {
+        //FIXME 缓存没有刷新
         User user = submission.getUser();
         UserProfile userProfile = userProfileDao.findByUser(user);
+        //更新用户状态
         if(problem.getRule_type() == ProblemRuleType.ACM)
         {
             Map<String, VoProblems> map = JsonUtils.jsonStringToObject(userProfile.getAcm_problems_status(), Map.class);
@@ -159,9 +164,17 @@ public class Dispatcher {
             userProfile.setIo_problems_status(JsonUtils.objectToJson(map));
         }
         userProfile.setSubmissionnumber(userProfile.getSubmissionnumber() + 1);
-        //FIXME 先默认AC
-        userProfile.setAcceptnumber(userProfile.getAcceptnumber() + 1);
+        if(submission.getResult() == 0)
+        {
+            userProfile.setAcceptnumber(userProfile.getAcceptnumber() + 1);
+        }
         userProfileDao.save(userProfile);
+        processTask();
+    }
+
+    private void updateProblemStatus(Problem problem, Submission submission)
+    {
+        //更新问题状态
         Map<String, Integer> status = JsonUtils.jsonStringToObject(problem.getStatistic_info(), Map.class);
         Integer tmp = status.get(submission.getResult());
         if(tmp == null)
@@ -173,8 +186,24 @@ public class Dispatcher {
         }
         problem.setStatistic_info(JsonUtils.objectToJson(status));
         problemDao.save(problem);
-        submissionDao.save(submission);
-        processTask();
+    }
+
+    private ReturnData sendRequests(Submission submission, Problem problem, JudgeServer judgeServer)
+    {
+        Map<String, Object> params = new HashMap<>();
+        params.put("language_type", LanguageUtils.getLanguageType(submission.getLanguage()));
+        params.put("src", submission.getCode());
+        params.put("max_cpu_time", problem.getTime_limit());
+        params.put("max_memory", problem.getMemory_limit() * 1024 * 1024);
+        params.put("test_case_id", problem.getTest_case_id());
+        //FIXME 是否需要输出
+        params.put("output", false);
+        params.put("spj_version", problem.getSpj_version());
+        params.put("spj_src", problem.getSpj_code());
+        params.put("io_mode", JsonUtils.jsonStringToObject(problem.getIo_mode(), ProblemIOModeBo.class));
+        //FIXME 替换url
+        ReturnData ans = RequestUtils.sendPostRequest("http://127.0.0.1:10088/judge", params, judgeServer.getToken());
+        return ans;
     }
 
     public void processTask()

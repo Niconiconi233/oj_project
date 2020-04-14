@@ -1,15 +1,13 @@
 package com.yw.ojproject.controller;
 
 import com.yw.ojproject.aop.LoginRequired;
+import com.yw.ojproject.bo.UserProfileBo;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.UserRankListDto;
 import com.yw.ojproject.entity.UserProfile;
 import com.yw.ojproject.service.UserProfileServer;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -77,6 +75,13 @@ public class UserProfileController extends BaseController<UserProfile> {
     public ReturnData userProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
     {
         return userProfileService.userProfile(httpServletRequest, httpServletResponse);
+    }
+
+    @LoginRequired
+    @PutMapping("/profile")
+    public ReturnData modUserProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody UserProfileBo userProfileBo)
+    {
+        return userProfileService.modUserProfile(httpServletRequest, httpServletResponse, userProfileBo);
     }
 
 

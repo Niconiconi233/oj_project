@@ -11,6 +11,7 @@ import com.yw.ojproject.service.UserServer;
 import com.yw.ojproject.utils.CookieUtils;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RedisUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
 * @program: ojproject
@@ -29,10 +35,10 @@ import java.util.UUID;
 *
 * @create: 2020-03-11 17:51
 **/
+@Slf4j
 @Service
 public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
 
-    //@Autowired
     UserDao userDao;
 
     @Autowired
@@ -40,6 +46,8 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
 
     @Autowired
     RedisUtils redisUtils;
+
+    private Lock lock = new ReentrantLock();
 
     public UserServerImpl(UserDao userDao)
     {
@@ -68,8 +76,7 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
     }
 
     @Override
-    public ReturnData userLogin(String username, String password, HttpServletResponse response)
-    {
+    public ReturnData userLogin(String username, String password, HttpServletResponse response) throws InterruptedException {
         User u = userDao.findByUsernameAndPassword(username, password);
         if(u == null)
         {

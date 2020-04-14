@@ -13,10 +13,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -105,7 +102,27 @@ public class JudgeServerServerImpl implements JudgeServerServer {
     {
         for(JudgeServer server : servers.values())
         {
-            judgeServerDao.save(server);
+            Date now = new Date();
+            Long res = (now.getTime() - server.getHeartbeat().getTime())/1000;
+            //只保存活跃的
+            if(res <= 10)
+            {
+                judgeServerDao.save(server);
+            }else
+            {
+                //清除不活跃的连接，释放资源
+                lock.lock();
+                try
+                {
+                    servers.remove(server.getHostname());
+                }catch (Exception e)
+                {
+                    log.warn("catch Exceptions: " +e.getMessage());
+                    throw e;
+                }finally {
+                    lock.unlock();
+                }
+            }
         }
     }
 

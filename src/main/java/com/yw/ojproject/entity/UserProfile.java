@@ -1,5 +1,6 @@
 package com.yw.ojproject.entity;
 
+import com.yw.ojproject.bo.UserProfileBo;
 import com.yw.ojproject.dto.VoProblems;
 import com.yw.ojproject.utils.JsonUtils;
 import lombok.Data;
@@ -68,4 +69,37 @@ public class UserProfile {
 
     @Column(name = "SUBMISSION_NUMBER")
     private Integer submissionnumber;
+
+    public void updateProfile(UserProfileBo userProfileBo)
+    {
+        if(userProfileBo.getReal_name() != null)
+        {
+            this.setReal_name(userProfileBo.getReal_name());
+        }
+        if(userProfileBo.getMood() != null)
+        {
+            this.setMood(userProfileBo.getMood());
+        }
+        if(userProfileBo.getMajor() != null)
+        {
+            this.setMajor(userProfileBo.getMajor());
+        }
+        if(userProfileBo.getBlog() != null)
+        {
+            this.setBlog(userProfileBo.getBlog());
+        }
+        if(userProfileBo.getSchool() != null)
+        {
+            this.setSchool(userProfileBo.getSchool());
+        }
+        if(userProfileBo.getGithub() != null)
+        {
+            this.setGithub(userProfileBo.getGithub());
+        }
+        if(userProfileBo.getLanguage() != null)
+        {
+            this.setLanguage(userProfileBo.getLanguage());
+        }
+
+    }
 }

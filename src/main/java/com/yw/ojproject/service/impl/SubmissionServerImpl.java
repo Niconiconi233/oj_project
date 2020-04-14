@@ -156,4 +156,13 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
         }
         return new ReturnData(null, true);
     }
+
+    @Override
+    public ReturnData adminSubmissionRejudge(String id)
+    {
+        redisUtils.lPushR(environment.getProperty("judge.queue.name"), id);
+        dispatcher.processTask();
+        return new ReturnData();
+    }
+
 }

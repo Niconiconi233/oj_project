@@ -1,5 +1,7 @@
 package com.yw.ojproject.service.impl;
 
+import com.yw.ojproject.bo.UserProfileBo;
+import com.yw.ojproject.dao.UserDao;
 import com.yw.ojproject.dao.UserProfileDao;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.UserProfileDto;
@@ -31,6 +33,9 @@ public class UserProfileServerImpl extends BaseServerImpl<UserProfile> implement
 
     @Autowired
     RedisUtils redisUtils;
+
+    @Autowired
+    UserDao userDao;
 
     private UserProfileDao userProfileDao;
 
@@ -82,6 +87,34 @@ public class UserProfileServerImpl extends BaseServerImpl<UserProfile> implement
             return new ReturnData(null, new UserProfileDto(profile));
         }
         return new ReturnData("error", "system error");
+    }
+
+    @Override
+    public ReturnData modUserProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, UserProfileBo userProfileBo)
+    {
+        //数据库中的是准确数据
+        Cookie cookie = CookieUtils.get(httpServletRequest, "csrftoken");
+        UserProfile userProfile = null;
+        Long last_time = null;
+        if(cookie != null)
+        {
+            String ustr = (String)redisUtils.get(cookie.getValue());
+            User u = JsonUtils.jsonStringToObject(ustr, User.class);
+            u.setReal_name(userProfileBo.getReal_name());
+            userDao.save(u);
+            userProfile = userProfileDao.findByUser(u);
+            userProfile.updateProfile(userProfileBo);
+            userProfileDao.save(userProfile);
+            //刷新user缓存，不刷新profile的
+            last_time = redisUtils.getExpire(cookie.getValue());
+            redisUtils.set(cookie.getValue(), JsonUtils.objectToJson(u), last_time);
+        }
+        cookie = CookieUtils.get(httpServletRequest, "_pid");
+        if(cookie != null && userProfile != null && last_time != null)
+        {
+            redisUtils.set(cookie.getValue(), JsonUtils.objectToJson(userProfile), last_time);
+        }
+        return new ReturnData(null, userProfile);
     }
 
 }
