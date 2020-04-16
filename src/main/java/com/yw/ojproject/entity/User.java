@@ -40,7 +40,7 @@ public class User {
     @Column(name = "USERNAME")
     private String username;
 
-    @Column
+    @Column(name = "REAL_NAME")
     private String real_name;
 
     @Column(name = "PASSWORD")

@@ -182,6 +182,7 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
         {
             return new ReturnData("error", "Username already exists");
         }*/
+        //FIXME update profile
         u.updateUser(userTotalDto);
         userDao.save(u);
         return new ReturnData(null, userTotalDto);
