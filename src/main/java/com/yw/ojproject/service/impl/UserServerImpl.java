@@ -19,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -102,6 +99,7 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
         cookie = CookieUtils.get(httpServletRequest, "_pid");
         redisUtils.del(cookie.getValue());
         CookieUtils.set(httpServletResponse, "_pid", "", 0);
+        UserProfileServerImpl.delProfileByPid(cookie.getValue());
         return new ReturnData(null, "succeeded");
     }
 

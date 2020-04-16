@@ -70,7 +70,7 @@ public class ProblemBo {
 
     private ProblemIOModeBo io_mode;
 
-    private String spj_version = null;
+    private String spj_version;
 
-    private Integer total_score = 0;
+    private Integer total_score = 100;
 }

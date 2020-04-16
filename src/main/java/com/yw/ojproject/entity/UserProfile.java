@@ -70,6 +70,16 @@ public class UserProfile {
     @Column(name = "SUBMISSION_NUMBER")
     private Integer submissionnumber;
 
+    @Transient
+    private Boolean hasChanged = false;
+
+    @Transient
+    public boolean hasChanged()
+    {
+        return hasChanged;
+    }
+
+    @Transient
     public void updateProfile(UserProfileBo userProfileBo)
     {
         if(userProfileBo.getReal_name() != null)
@@ -100,6 +110,5 @@ public class UserProfile {
         {
             this.setLanguage(userProfileBo.getLanguage());
         }
-
     }
 }

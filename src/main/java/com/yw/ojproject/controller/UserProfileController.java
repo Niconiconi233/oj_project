@@ -72,15 +72,13 @@ public class UserProfileController extends BaseController<UserProfile> {
     */
     @LoginRequired
     @GetMapping("/profile")
-    public ReturnData userProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-    {
+    public ReturnData userProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws InterruptedException {
         return userProfileService.userProfile(httpServletRequest, httpServletResponse);
     }
 
     @LoginRequired
     @PutMapping("/profile")
-    public ReturnData modUserProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody UserProfileBo userProfileBo)
-    {
+    public ReturnData modUserProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody UserProfileBo userProfileBo) throws InterruptedException {
         return userProfileService.modUserProfile(httpServletRequest, httpServletResponse, userProfileBo);
     }
 

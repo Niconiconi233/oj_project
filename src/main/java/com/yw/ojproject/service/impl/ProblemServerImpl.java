@@ -6,10 +6,7 @@ import com.yw.ojproject.bo.ProblemRuleType;
 import com.yw.ojproject.dao.ProblemDao;
 import com.yw.ojproject.dao.ProblemTagDao;
 import com.yw.ojproject.dto.*;
-import com.yw.ojproject.entity.JudgeServer;
-import com.yw.ojproject.entity.Problem;
-import com.yw.ojproject.entity.ProblemTag;
-import com.yw.ojproject.entity.User;
+import com.yw.ojproject.entity.*;
 import com.yw.ojproject.service.JudgeServerServer;
 import com.yw.ojproject.service.ProblemServer;
 import com.yw.ojproject.utils.*;
@@ -77,7 +74,7 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
     @Override
     public void _add_problem_status(List<Problem> param, HttpServletRequest httpServletRequest)
     {
-        /*Cookie cookie = CookieUtils.get(httpServletRequest, "_pid");
+        Cookie cookie = CookieUtils.get(httpServletRequest, "_pid");
         //未登录情况下或者过期情况下不进行下一步判断
         if(cookie == null) {
             return;
@@ -92,23 +89,23 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
         {
             if(tmp.getRule_type() == ProblemRuleType.ACM)
             {
-                if(acm_status.containsKey(tmp.get_id())) {
-                    tmp.setMy_status(0);
+                if(acm_status.containsKey(tmp.getId().toString())) {
+                    tmp.setMy_status(1);
                 }
             }else
             {
                 if(io_status.containsKey(tmp.getId()))
                 {
-                    tmp.setMy_status(0);
+                    tmp.setMy_status(1);
                 }
             }
-        }*/
+        }
     }
 
     @Override
     public void _add_problem_status(Problem param, HttpServletRequest httpServletRequest)
     {
-        /*Cookie cookie = CookieUtils.get(httpServletRequest, "_pid");
+        Cookie cookie = CookieUtils.get(httpServletRequest, "_pid");
         //未登录情况下或者过期情况下不进行下一步判断
         if(cookie == null) {
             return;
@@ -121,15 +118,15 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
 
         if(param.getRule_type() == ProblemRuleType.ACM)
         {
-            if(acm_status.containsKey(param.getId())) {
-                param.setMy_status(0);
+            if(acm_status.containsKey(param.getId().toString())) {
+                param.setMy_status(1);
             } else
             {
-                if(io_status.containsKey(param.getId())) {
+                if(io_status.containsKey(param.getId().toString())) {
                     param.setMy_status(0);
                 }
             }
-        }*/
+        }
     }
 
     @Override
@@ -447,7 +444,6 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
         {
             return new ReturnData("error", "no oj server avaliable");
         }
-        System.out.println(spj_version);
         Map<String, Object> params = new HashMap<>();
         params.put("spj_version", spj_version);
         params.put("src", compileSPJBo.getSpj_code());
@@ -464,6 +460,9 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
         if(((String)ans.getData()).compareTo("success") != 0)
         {
             ans.setError("error");
+        }else
+        {
+            ans.setData(spj_version);
         }
         return ans;
     }

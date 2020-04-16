@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +40,6 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
 
     @Autowired
     private RedisUtils redisUtils;
-
-    //@Autowired
-    //private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private Environment environment;
@@ -74,8 +72,12 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
         User user = JsonUtils.jsonStringToObject((String) redisUtils.get(cookie.getValue()), User.class);
         Submission submission = new Submission(user, problem, (String) params.get("language"), (String) params.get("code"), "");
         //发送到消息队列中
+        cookie = CookieUtils.get(httpServletRequest, "_pid");
         submissionDao.save(submission);
-        redisUtils.lPushR(environment.getProperty("judge.queue.name"), submission.getId());
+        Map<String, String> data = new HashMap<>();
+        data.put("id", submission.getId());
+        data.put("_pid", cookie.getValue());
+        redisUtils.lPushR(environment.getProperty("judge.queue.name"), data);
         dispatcher.processTask();
 
         //弃用rabbitmq

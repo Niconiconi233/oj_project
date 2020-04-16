@@ -5,11 +5,11 @@ import com.yw.ojproject.bo.ProblemIOModeBo;
 import com.yw.ojproject.bo.ProblemRuleType;
 import com.yw.ojproject.dao.ProblemDao;
 import com.yw.ojproject.dao.SubmissionDao;
-import com.yw.ojproject.dao.UserProfileDao;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.VoProblems;
 import com.yw.ojproject.entity.*;
 import com.yw.ojproject.service.JudgeServerServer;
+import com.yw.ojproject.service.impl.UserProfileServerImpl;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.LanguageUtils;
 import com.yw.ojproject.utils.RedisUtils;
@@ -20,7 +20,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,12 +54,8 @@ public class Dispatcher {
     @Autowired
     private ProblemDao problemDao;
 
-    @Autowired
-    private UserProfileDao userProfileDao;
-
     //FIXME 优化结构
-    @Transactional
-    public void judge(String id)
+    public void judge(String id, String _pid)
     {
         Submission submission = submissionDao.findById(id).orElse(null);
         if(submission == null)
@@ -139,18 +134,18 @@ public class Dispatcher {
                 submission.setResult(JudgeStatus.ACCEPTED.getCode());
             }
         }
-        updateUserStatus(submission, problem);
+        updateUserStatus(submission, problem, _pid);
         updateProblemStatus(problem, submission);
         submissionDao.save(submission);
         processTask();
     }
 
 
-    private void updateUserStatus(Submission submission, Problem problem)
+    private void updateUserStatus(Submission submission, Problem problem, String _pid)
     {
         //FIXME 缓存没有刷新
         User user = submission.getUser();
-        UserProfile userProfile = userProfileDao.findByUser(user);
+        UserProfile userProfile = UserProfileServerImpl.getProfileByPid(_pid);
         //更新用户状态
         if(problem.getRule_type() == ProblemRuleType.ACM)
         {
@@ -168,8 +163,8 @@ public class Dispatcher {
         {
             userProfile.setAcceptnumber(userProfile.getAcceptnumber() + 1);
         }
-        userProfileDao.save(userProfile);
-        processTask();
+        userProfile.setHasChanged(true);
+        UserProfileServerImpl.putProfileByPid(_pid, userProfile);
     }
 
     private void updateProblemStatus(Problem problem, Submission submission)
@@ -199,6 +194,7 @@ public class Dispatcher {
         //FIXME 是否需要输出
         params.put("output", false);
         params.put("spj_version", problem.getSpj_version());
+        params.put("spj_language", LanguageUtils.getLanguageType(problem.getSpj_language()));
         params.put("spj_src", problem.getSpj_code());
         params.put("io_mode", JsonUtils.jsonStringToObject(problem.getIo_mode(), ProblemIOModeBo.class));
         //FIXME 替换url
@@ -210,8 +206,8 @@ public class Dispatcher {
     {
         String qname = environment.getProperty("judge.queue.name");
         if(redisUtils.lGetListSize(qname) > 0) {
-            String id = (String) redisUtils.lPopL(qname);
-            judge(id);
+            Map<String, String> data = (Map<String, String>) redisUtils.lPopL(qname);
+            judge(data.get("id"), data.get("_pid"));
         }
     }
 }

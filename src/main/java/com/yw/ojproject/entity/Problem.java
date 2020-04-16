@@ -134,7 +134,7 @@ public class Problem {
     @Column(name = "SPJ_LANGUAGE")
     private String spj_language;
 
-    @Column(name = "SPJ_CODE")
+    @Column(name = "SPJ_CODE", length = 4096)
     private String spj_code;
 
     @Column(name = "SPJ_VERSION")
