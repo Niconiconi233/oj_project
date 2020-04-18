@@ -1,12 +1,10 @@
 package com.yw.ojproject.service.impl;
 
-import com.sun.deploy.net.HttpResponse;
 import com.yw.ojproject.bo.UserProfileBo;
 import com.yw.ojproject.dao.UserDao;
 import com.yw.ojproject.dao.UserProfileDao;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.UserProfileDto;
-import com.yw.ojproject.entity.JudgeServer;
 import com.yw.ojproject.entity.User;
 import com.yw.ojproject.entity.UserProfile;
 import com.yw.ojproject.service.UserProfileServer;
@@ -16,7 +14,6 @@ import com.yw.ojproject.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.java2d.cmm.Profile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -161,7 +158,6 @@ public class UserProfileServerImpl extends BaseServerImpl<UserProfile> implement
             u.setReal_name(userProfileBo.getReal_name());
             userDao.save(u);
             redisUtils.set(userCookie.getValue(), JsonUtils.objectToJson(u), last_time);
-            log.info("use cache");
             return new ReturnData(null, new UserProfileDto(userProfile));
         }else
         {

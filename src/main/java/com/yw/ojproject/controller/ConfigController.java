@@ -108,7 +108,8 @@ public class ConfigController {
      */
     @GetMapping("/languages")
     public Object languages() {
-        Object result = RequestUtils.sendPostRequest("http://127.0.0.1:10088/language", null, "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92");
+        //FIXME 替换连接
+        Object result = RequestUtils.sendPostRequest("http://judge-server:8080", null, "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92");
         return result;
     }
 

@@ -455,7 +455,7 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
             params.put("language_type", "c_lang");
         }
         //TODO fix url
-        ReturnData ans = RequestUtils.sendPostRequest("http://127.0.0.1:10088/compile_spj", params, judgeServer.getToken());
+        ReturnData ans = RequestUtils.sendPostRequest(judgeServer.getService_url() + "/compile_spj", params, judgeServer.getToken());
         judgeServerServer.releaseJudgeServer(judgeServer);
         if(((String)ans.getData()).compareTo("success") != 0)
         {
