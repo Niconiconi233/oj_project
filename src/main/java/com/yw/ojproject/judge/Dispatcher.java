@@ -198,7 +198,8 @@ public class Dispatcher {
         params.put("spj_src", problem.getSpj_code());
         params.put("io_mode", JsonUtils.jsonStringToObject(problem.getIo_mode(), ProblemIOModeBo.class));
         //FIXME 替换url
-        ReturnData ans = RequestUtils.sendPostRequest(judgeServer.getService_url() + "/judge", params, judgeServer.getToken());
+        //ReturnData ans = RequestUtils.sendPostRequest(judgeServer.getService_url() + "/judge", params, judgeServer.getToken());
+        ReturnData ans = RequestUtils.sendPostRequest( "http://localhost:8081/judge", params, judgeServer.getToken());
         return ans;
     }
 

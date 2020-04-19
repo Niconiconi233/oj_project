@@ -3,6 +3,7 @@ package com.yw.ojproject.utils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ResourceUtils;
@@ -149,7 +150,6 @@ public class JsonUtils {
             }catch (Exception e1){
                 e1.printStackTrace();
             }
-
         }
         return result;
     }
@@ -176,7 +176,7 @@ public class JsonUtils {
      * @return
      * @throws
      */
-    private static FileInputStream getResFileStream(String filename) throws FileNotFoundException {
+    private static FileInputStream getResFileStream(String filename) throws IOException {
         FileInputStream fin = null;
         File file = getResFile(filename);
         log.info("getResFile path={}",file);
@@ -191,7 +191,7 @@ public class JsonUtils {
     * @Author: YW
     * @Date: 
     */
-    private static FileOutputStream getResFileOutStream(String filename) throws FileNotFoundException {
+    private static FileOutputStream getResFileOutStream(String filename) throws IOException {
         FileOutputStream fout = null;
         File file = getResFile(filename);
         log.info("getResFile path={}", file);

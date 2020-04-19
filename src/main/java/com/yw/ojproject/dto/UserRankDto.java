@@ -27,7 +27,7 @@ public class UserRankDto {
         this.user = new UserSimpleDto(userProfile.getUser());
         this.real_name = userProfile.getReal_name();
         this.acm_problems_status = JsonUtils.jsonStringToObject(userProfile.getAcm_problems_status(), Map.class);
-        this.io_problems_status = JsonUtils.jsonStringToObject(userProfile.getIo_problems_status(), Map.class);
+        this.oi_problems_status = JsonUtils.jsonStringToObject(userProfile.getIo_problems_status(), Map.class);
         this.avatar = userProfile.getAvator();
         this.blog = userProfile.getBlog();
         this.mood = userProfile.getMood();
@@ -43,7 +43,7 @@ public class UserRankDto {
     private UserSimpleDto user;
     private String real_name;
     private Map<Integer, VoProblems> acm_problems_status;
-    private Map<Integer, VoProblems> io_problems_status;
+    private Map<Integer, VoProblems> oi_problems_status;
     private String avatar;
     private String blog;
     private String mood;

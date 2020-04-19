@@ -10,6 +10,9 @@ package com.yw.ojproject.utils;/**
 public class LanguageUtils {
     public static String getLanguageType(String language)
     {
+        if(language == null) {
+            return null;
+        }
         switch (language)
         {
             case "C":

@@ -9,6 +9,7 @@ import com.yw.ojproject.utils.IpUtils;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,9 @@ public class ConfigController {
     @Autowired
     JudgeServerServer judgeServerServer;
 
+    @Autowired
+    private Environment environment;
+
     /**
      * @Description: 获取网页信息
      * @Param: []
@@ -43,8 +47,9 @@ public class ConfigController {
      * @Date:
      */
     @GetMapping("/website")
-    public ReturnData website() {
-        Object ans = JsonUtils.ResolveJsonFileToObject("webconfig.json");
+    public ReturnData website() throws IOException {
+        Object ans = null;
+        ans = JsonUtils.ResolveJsonFileToObject(environment.getProperty("confPath") + "webconfig.json");
         return new ReturnData(null, ans);
     }
 
@@ -57,9 +62,10 @@ public class ConfigController {
      */
     @SuperadminRequired
     @GetMapping("/admin/website")
-    public ReturnData adminWebsite() {
-
-        Object ans = JsonUtils.ResolveJsonFileToObject("webconfig.json");
+    public ReturnData adminWebsite() throws IOException {
+        Object ans = null;
+        //尝试读取发送配置
+        ans = JsonUtils.ResolveJsonFileToObject(environment.getProperty("confPath") + "webconfig.json");
         return new ReturnData(null, ans);
     }
 
@@ -73,7 +79,7 @@ public class ConfigController {
     @SuperadminRequired
     @PostMapping("/admin/website")
     public ReturnData adminPostWebsite(@RequestBody WebsiteConfigDto websiteConfigDto) throws IOException {
-        JsonUtils.ResolveObjectToJsonFile(websiteConfigDto, "webconfig.json");
+        JsonUtils.ResolveObjectToJsonFile(websiteConfigDto, environment.getProperty("confPath") + "webconfig.json");
         return new ReturnData();
     }
 
@@ -86,15 +92,17 @@ public class ConfigController {
      */
     @SuperadminRequired
     @GetMapping("/admin/smtp")
-    public ReturnData adminGetSMTP() {
-        Object ans = JsonUtils.ResolveJsonFileToObject("websmtp.json");
+    public ReturnData adminGetSMTP() throws IOException {
+        Object ans = null;
+        //尝试读取发送配置
+        ans = JsonUtils.ResolveJsonFileToObject(environment.getProperty("confPath") + "websmtp.json");
         return new ReturnData(null, ans);
     }
 
     @SuperadminRequired
     @PostMapping("/admin/smtp")
     public ReturnData adminPostSMTP(@RequestBody WebsiteSMTPDto websiteSMTPDto) throws IOException {
-        JsonUtils.ResolveObjectToJsonFile(websiteSMTPDto, "websmtp.json");
+        JsonUtils.ResolveObjectToJsonFile(websiteSMTPDto, environment.getProperty("confPath") + "websmtp.json");
         return new ReturnData();
 
     }
@@ -109,7 +117,8 @@ public class ConfigController {
     @GetMapping("/languages")
     public Object languages() {
         //FIXME 替换连接
-        Object result = RequestUtils.sendPostRequest("http://judge-server:8080", null, "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92");
+        //Object result = RequestUtils.sendPostRequest("http://oj-judge:8080/language", null, "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92");
+        Object result = RequestUtils.sendPostRequest("http://localhost:8081/language", null, "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92");
         return result;
     }
 

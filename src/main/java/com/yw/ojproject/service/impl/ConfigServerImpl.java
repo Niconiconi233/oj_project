@@ -3,8 +3,7 @@ package com.yw.ojproject.service.impl;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.TestCaseDto;
 import com.yw.ojproject.service.ConfigServer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -24,13 +23,18 @@ import java.util.List;
 @Service
 public class ConfigServerImpl implements ConfigServer {
 
-    @Autowired
-    private Environment environment;
+    @Value("${confPath}")
+    private String confPath;
+
+    @Value("${casePath}")
+    private String casePath;
+
+
 
     @Override
     public ReturnData getAllTestCase()
     {
-        File file = new File(environment.getProperty("casePath"));
+        File file = new File(casePath);
         List<TestCaseDto> ans = new LinkedList<>();
         File[] files = file.listFiles();
         for(File f : files)
@@ -43,7 +47,7 @@ public class ConfigServerImpl implements ConfigServer {
     @Override
     public ReturnData delTestCase(String id)
     {
-        File file = new File(environment.getProperty("casePath") + "/" + id);
+        File file = new File(casePath + id);
         if(file.exists())
         {
             File[] files = file.listFiles();

@@ -38,16 +38,16 @@ public class User {
     private Integer id;
 
     @Column(name = "USERNAME")
-    private String username;
+    private String username = "";
 
     @Column(name = "REAL_NAME")
-    private String real_name;
+    private String real_name = "";
 
     @Column(name = "PASSWORD")
-    private String password;
+    private String password = "";
 
     @Column(name = "EMAIL")
-    private String email;
+    private String email = "";
 
     @Column(name = "CREATE_TIME")
     private Date ctime;

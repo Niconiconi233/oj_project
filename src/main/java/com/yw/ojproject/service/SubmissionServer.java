@@ -81,5 +81,5 @@ public interface SubmissionServer extends BaseServer<Submission> {
     * @Author: YW
     * @Date: 
     */
-    public ReturnData adminSubmissionRejudge(String id);
+    public ReturnData adminSubmissionRejudge(String id, HttpServletRequest httpServletRequest);
 }

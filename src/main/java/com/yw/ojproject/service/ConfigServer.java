@@ -2,6 +2,8 @@ package com.yw.ojproject.service;
 
 import com.yw.ojproject.dto.ReturnData;
 
+import java.io.IOException;
+
 public interface ConfigServer {
 
     /**

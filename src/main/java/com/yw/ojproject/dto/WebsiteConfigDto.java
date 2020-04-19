@@ -17,10 +17,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WebsiteConfigDto {
-    private String website_base_url;
-    private String website_name;
-    private String website_name_shortcut;
-    private String website_footer;
-    private Boolean allow_register;
-    private Boolean submission_list_show_all;
+    private String website_base_url = "http://localhost:8080";
+    private String website_name = "OJ-Project";
+    private String website_name_shortcut = "OJ";
+    private String website_footer = "<p>Online Judge Project</p>";
+    private Boolean allow_register = true;
+    private Boolean submission_list_show_all = true;
 }

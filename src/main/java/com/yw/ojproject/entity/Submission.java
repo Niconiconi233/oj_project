@@ -58,10 +58,10 @@ public class Submission {
     private User user;
 
     @Column(name = "USERNAME")
-    private String username;
+    private String username = "";
 
     @Column(name = "CODE", length = 4096)
-    private String code;
+    private String code = "";
 
     @Column(name = "RESULT")
     private Integer result = JudgeStatus.PENDING.getCode();
@@ -70,7 +70,7 @@ public class Submission {
     private String info = JsonUtils.objectToJson(new ReturnData());
 
     @Column(name = "LANGUAGE")
-    private String language;
+    private String language = "";
 
     @Column(name = "SHARED")
     private Boolean shared = false;
@@ -79,7 +79,7 @@ public class Submission {
     private String statistic_info = JsonUtils.objectToJson(new HashMap<String, Object>());
 
     @Column(name = "IP")
-    private String ip;
+    private String ip = "";
 
     @Transient
     public Boolean check_user_permission(User user)

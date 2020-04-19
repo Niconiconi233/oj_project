@@ -160,9 +160,13 @@ public class SubmissionServerImpl extends BaseServerImpl<Submission> implements 
     }
 
     @Override
-    public ReturnData adminSubmissionRejudge(String id)
+    public ReturnData adminSubmissionRejudge(String id, HttpServletRequest httpServletRequest)
     {
-        redisUtils.lPushR(environment.getProperty("judge.queue.name"), id);
+        Cookie cookie = CookieUtils.get(httpServletRequest, "_pid");
+        Map<String, String> data = new HashMap<>();
+        data.put("id", id);
+        data.put("_pid", cookie.getValue());
+        redisUtils.lPushR(environment.getProperty("judge.queue.name"), data);
         dispatcher.processTask();
         return new ReturnData();
     }

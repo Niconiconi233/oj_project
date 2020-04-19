@@ -62,13 +62,13 @@ public class UserProfile {
     private String language;
 
     @Column(name = "ACCEPED_NUMBER")
-    private Integer acceptnumber;
+    private Integer acceptnumber = 0;
 
     @Column(name = "TOTAL_SCORE")
-    private Integer totalscore;
+    private Integer totalscore = 0;
 
     @Column(name = "SUBMISSION_NUMBER")
-    private Integer submissionnumber;
+    private Integer submissionnumber = 0;
 
     @Transient
     private Boolean hasChanged = false;

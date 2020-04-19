@@ -127,8 +127,8 @@ public class SubmissionController extends BaseController<Submission> {
 
     @SuperadminRequired
     @GetMapping("/admin/submission/rejudge")
-    public ReturnData submissionRejudge(@RequestParam String id)
+    public ReturnData submissionRejudge(@RequestParam String id, HttpServletRequest httpServletRequest)
     {
-        return submissionServer.adminSubmissionRejudge(id);
+        return submissionServer.adminSubmissionRejudge(id, httpServletRequest);
     }
 }
