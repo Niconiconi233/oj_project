@@ -1,8 +1,8 @@
 package com.yw.ojproject.judge;
 
-import com.yw.ojproject.bo.JudgeStatus;
+import com.yw.ojproject.enums.JudgeStatus;
 import com.yw.ojproject.bo.ProblemIOModeBo;
-import com.yw.ojproject.bo.ProblemRuleType;
+import com.yw.ojproject.enums.ProblemRuleType;
 import com.yw.ojproject.dao.ProblemDao;
 import com.yw.ojproject.dao.SubmissionDao;
 import com.yw.ojproject.dto.ReturnData;
@@ -165,6 +165,8 @@ public class Dispatcher {
         }
         userProfile.setHasChanged(true);
         UserProfileServerImpl.putProfileByPid(_pid, userProfile);
+        //缓式更新缓存，先删除
+        redisUtils.del(_pid);
     }
 
     private void updateProblemStatus(Problem problem, Submission submission)

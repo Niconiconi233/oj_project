@@ -14,7 +14,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: redis配置
 *
 * @author: YW
 *

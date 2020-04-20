@@ -1,8 +1,8 @@
 package com.yw.ojproject.dto;
 
-import com.yw.ojproject.bo.ProblemDifficulty;
+import com.yw.ojproject.enums.ProblemDifficulty;
 import com.yw.ojproject.bo.ProblemIOModeBo;
-import com.yw.ojproject.bo.ProblemSample;
+import com.yw.ojproject.bo.ProblemSampleBo;
 import com.yw.ojproject.entity.Problem;
 import com.yw.ojproject.entity.ProblemTag;
 import com.yw.ojproject.utils.JsonUtils;
@@ -18,7 +18,7 @@ import java.util.Map;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 问题DTO
 *
 * @author: YW
 *
@@ -42,7 +42,7 @@ public class ProblemsDto {
         this.description = problem.getDescription();
         this.input_description = problem.getInput_description();
         this.output_description = problem.getOutput_description();
-        this.samples = JsonUtils.jsonStringToList(problem.getSamples(), ProblemSample.class);
+        this.samples = JsonUtils.jsonStringToList(problem.getSamples(), ProblemSampleBo.class);
         this.hint = problem.getHint();
         this.languages = JsonUtils.jsonStringToList(problem.getLanguages(), String.class);
         this.create_time = problem.getTime();
@@ -73,7 +73,7 @@ public class ProblemsDto {
     private String description;
     private String input_description;
     private String output_description;
-    private List<ProblemSample> samples;
+    private List<ProblemSampleBo> samples;
     private String hint;
     private List<String> languages;
     private Date create_time;

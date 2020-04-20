@@ -12,7 +12,7 @@ import java.util.List;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 公告列表DTO
 *
 * @author: YW
 *

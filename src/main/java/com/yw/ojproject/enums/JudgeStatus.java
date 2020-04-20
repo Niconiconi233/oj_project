@@ -1,10 +1,8 @@
-package com.yw.ojproject.bo;
+package com.yw.ojproject.enums;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 @NoArgsConstructor

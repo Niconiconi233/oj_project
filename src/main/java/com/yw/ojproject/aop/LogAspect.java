@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 登录判断
 *
 * @author: YW
 *

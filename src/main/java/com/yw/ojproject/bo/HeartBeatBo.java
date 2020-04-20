@@ -3,12 +3,11 @@ package com.yw.ojproject.bo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 心跳包BO
 *
 * @author: YW
 *

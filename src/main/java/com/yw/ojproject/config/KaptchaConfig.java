@@ -12,7 +12,7 @@ import java.util.Properties;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 验证码配置
 *
 * @author: YW
 *

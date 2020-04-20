@@ -1,4 +1,4 @@
-package com.yw.ojproject.bo;
+package com.yw.ojproject.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +7,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public enum ContestRuleType {
-    ACM(0, "ACM"),
-    IO(1,"IO");
+public enum ProblemPermission {
+    NONE(0, "None"),
+    OWN(1, "Own"),
+    ALL(2, "All");
 
-    private Integer code;
+    private int value;
     private String desc;
 }

@@ -208,12 +208,26 @@ public class ConfigController {
         return judgeServerServer.getJudgeServer();
     }
 
+    /**
+    * @Description: 管理员接口 删除judgeserver
+    * @Param: [hostname]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @SuperadminRequired
     @DeleteMapping("/admin/judge_server")
     public ReturnData adminDelServer(@RequestParam String hostname) throws InterruptedException {
         return judgeServerServer.delJudgeServer(hostname);
     }
 
+    /**
+    * @Description: 管理员接口 修改judgeserver
+    * @Param: [params]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @SuperadminRequired
     @PutMapping("/admin/judge_server")
     public ReturnData adminPutServer(@RequestBody Map<String, String> params)

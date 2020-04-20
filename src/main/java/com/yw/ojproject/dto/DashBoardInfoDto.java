@@ -10,7 +10,7 @@ import java.util.Map;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 信息表DTO
 *
 * @author: YW
 *

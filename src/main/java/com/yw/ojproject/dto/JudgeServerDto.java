@@ -11,7 +11,7 @@ import java.util.Date;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 评测服务器DTO
 *
 * @author: YW
 *

@@ -1,6 +1,6 @@
 package com.yw.ojproject.entity;
 
-import com.yw.ojproject.bo.JudgeStatus;
+import com.yw.ojproject.enums.JudgeStatus;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.utils.JsonUtils;
 import lombok.Data;

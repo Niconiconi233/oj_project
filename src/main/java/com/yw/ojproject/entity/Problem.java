@@ -1,10 +1,9 @@
 package com.yw.ojproject.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yw.ojproject.bo.ProblemBo;
-import com.yw.ojproject.bo.ProblemDifficulty;
-import com.yw.ojproject.bo.ProblemRuleType;
+import com.yw.ojproject.enums.ProblemDifficulty;
+import com.yw.ojproject.enums.ProblemRuleType;
 import com.yw.ojproject.dto.AdminProblemDto;
 import com.yw.ojproject.utils.JsonUtils;
 import lombok.Data;
@@ -81,22 +80,22 @@ public class Problem {
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 4096)
     private String description;
 
-    @Column(name = "INPUT_DESCRIPTION")
+    @Column(name = "INPUT_DESCRIPTION", length = 2048)
     private String input_description;
 
-    @Column(name = "OUTPUT_DESCRIPTION")
+    @Column(name = "OUTPUT_DESCRIPTION", length = 2048)
     private String output_description;
 
-    @Column(name = "SAMPLES")
+    @Column(name = "SAMPLES", length = 4096)
     private String samples;
 
     @Column(name = "TEST_CASE_ID")
     private String test_case_id;
 
-    @Column(name = "TEST_CASE_SCORE", length = 512)
+    @Column(name = "TEST_CASE_SCORE", length = 2048)
     private String test_case_score;
 
     @Column(name = "HINT", length = 2048)
@@ -105,7 +104,7 @@ public class Problem {
     @Column(name = "LANGUAGES")
     private String languages;
 
-    @Column(name = "TEMPLATE", length = 512)
+    @Column(name = "TEMPLATE", length = 1024)
     private String templates;
 
     @Column(name = "CREATE_TIME")

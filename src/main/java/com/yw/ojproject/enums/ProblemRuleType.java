@@ -1,4 +1,4 @@
-package com.yw.ojproject.bo;
+package com.yw.ojproject.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public enum ProblemIOMode {
-    standard(0,"Standard IO"),
-    file(1,"File IO");
+public enum ProblemRuleType {
+    ACM(0,"ACM"),
+    IO(1,"IO");
 
     private Integer code;
     private String desc;

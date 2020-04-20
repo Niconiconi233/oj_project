@@ -1,8 +1,8 @@
 package com.yw.ojproject.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.yw.ojproject.bo.AdminType;
-import com.yw.ojproject.bo.ProblemPermission;
+import com.yw.ojproject.enums.AdminType;
+import com.yw.ojproject.enums.ProblemPermission;
 import com.yw.ojproject.dto.UserTotalDto;
 import lombok.Data;
 

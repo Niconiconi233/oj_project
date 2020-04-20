@@ -10,7 +10,7 @@ import java.util.Map;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 问题BO
 *
 * @author: YW
 *
@@ -48,7 +48,7 @@ public class ProblemBo {
 
     private Map<String, String> template;
 
-    private List<ProblemSample> samples;
+    private List<ProblemSampleBo> samples;
 
     private Boolean spj;
 

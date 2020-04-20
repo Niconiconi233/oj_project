@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 *
 * @author: YW
 *
-* @create: 2020-03-18 19:20
+* @create: 2020-03-18 19:18
 **/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProblemCaseScore {
-    private String input_name;
-    private String output_name;
-    private Integer score;
+public class ProblemSampleBo {
+
+    private String input;
+    private String output;
 }

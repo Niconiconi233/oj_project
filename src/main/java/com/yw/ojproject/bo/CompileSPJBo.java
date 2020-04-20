@@ -2,13 +2,12 @@ package com.yw.ojproject.bo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: spjBO
 *
 * @author: YW
 *

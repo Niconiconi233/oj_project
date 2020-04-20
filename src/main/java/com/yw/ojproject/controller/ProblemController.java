@@ -117,7 +117,7 @@ public class ProblemController extends BaseController<Problem> {
             return new ReturnData(null, new ProblemsListDto(result));
         }
         Page<Problem> result = findAllPageByParams(args);
-        //problemServer._add_problem_status(result.getContent(), httpServletRequest);
+        problemServer._add_problem_status(result.getContent(), httpServletRequest);
         return new ReturnData(null, new ProblemsListDto(result));
     }
 
@@ -197,6 +197,13 @@ public class ProblemController extends BaseController<Problem> {
     }
 
 
+    /**
+    * @Description: 管理员接口 删除问题
+    * @Param: [id]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @SuperadminRequired
     @DeleteMapping("/admin/problem")
     public ReturnData delProblems(@RequestParam Integer id)
@@ -204,6 +211,13 @@ public class ProblemController extends BaseController<Problem> {
         return problemServer.delProblems(id);
     }
 
+    /**
+    * @Description: 管理员接口 编译spj
+    * @Param: [compileSPJBo]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @AdminRequired
     @PostMapping("/admin/compile_spj")
     public ReturnData adminCompileSPJ(@RequestBody CompileSPJBo compileSPJBo)

@@ -1,4 +1,4 @@
-package com.yw.ojproject.bo;
+package com.yw.ojproject.enums;
 
 
 import lombok.AllArgsConstructor;

@@ -9,7 +9,7 @@ import java.util.List;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 评测服务器列表DTO
 *
 * @author: YW
 *

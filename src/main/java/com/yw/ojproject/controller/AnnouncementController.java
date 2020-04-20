@@ -25,8 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class AnnouncementController extends BaseController<Announcement> {
-
-    //@Autowired
+    
     AnnouncementServer announcementServer;
 
     public AnnouncementController(AnnouncementServer announcementServer)
@@ -100,6 +99,13 @@ public class AnnouncementController extends BaseController<Announcement> {
         return new ReturnData(null, new AnnouncementListDto(result));
     }
 
+    /**
+    * @Description: 管理员接口 修改公告
+    * @Param: [announcementBo]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @SuperadminRequired
     @PutMapping("/admin/announcement")
     public ReturnData adminPutAnnouncement(@RequestBody AnnouncementBo announcementBo)

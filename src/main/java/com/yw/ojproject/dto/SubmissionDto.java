@@ -1,6 +1,5 @@
 package com.yw.ojproject.dto;
 
-import com.yw.ojproject.bo.JudgeStatus;
 import com.yw.ojproject.entity.Submission;
 import com.yw.ojproject.utils.JsonUtils;
 import lombok.AllArgsConstructor;

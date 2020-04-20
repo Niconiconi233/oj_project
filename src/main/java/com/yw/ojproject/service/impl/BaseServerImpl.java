@@ -1,6 +1,6 @@
 package com.yw.ojproject.service.impl;
 
-import com.yw.ojproject.bo.ClassTypeBo;
+import com.yw.ojproject.enums.ClassTypeBo;
 import com.yw.ojproject.bo.ColumnConditionBo;
 import com.yw.ojproject.service.BaseServer;
 import com.yw.ojproject.utils.ClassHelper;

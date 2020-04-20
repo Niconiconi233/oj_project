@@ -1,5 +1,6 @@
 package com.yw.ojproject.bo;
 
+import com.yw.ojproject.enums.ProblemIOMode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 问题模式BO
 *
 * @author: YW
 *

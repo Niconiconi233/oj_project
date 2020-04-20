@@ -9,7 +9,7 @@ import java.util.Date;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 公告DTO
 *
 * @author: YW
 *

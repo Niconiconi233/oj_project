@@ -76,6 +76,13 @@ public class UserProfileController extends BaseController<UserProfile> {
         return userProfileService.userProfile(httpServletRequest, httpServletResponse);
     }
 
+    /**
+    * @Description: 修改用户配置
+    * @Param: [httpServletRequest, httpServletResponse, userProfileBo]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date:
+    */
     @LoginRequired
     @PutMapping("/profile")
     public ReturnData modUserProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody UserProfileBo userProfileBo) throws InterruptedException {

@@ -1,8 +1,8 @@
 package com.yw.ojproject.entity;
 
-import com.yw.ojproject.bo.ContestRuleType;
-import com.yw.ojproject.bo.ContestStatus;
-import com.yw.ojproject.bo.ContestType;
+import com.yw.ojproject.enums.ContestRuleType;
+import com.yw.ojproject.enums.ContestStatus;
+import com.yw.ojproject.enums.ContestType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;

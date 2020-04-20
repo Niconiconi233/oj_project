@@ -35,12 +35,26 @@ public class SubmissionController extends BaseController<Submission> {
         this.submissionServer = submissionServer;
     }
 
+    /**
+    * @Description: 修改submission
+    * @Param: [param, httpServletRequest]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @LoginRequired
     @PostMapping("/submission")
     public ReturnData submission(@RequestBody Map<String, Object> param, HttpServletRequest httpServletRequest) throws UnsupportedEncodingException {
         return submissionServer.postSubmission(param, httpServletRequest);
     }
 
+    /**
+    * @Description: 获取submission
+    * @Param: [id, httpServletRequest]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @LoginRequired
     @GetMapping("/submission")
     public ReturnData getSubmission(@RequestParam String id, HttpServletRequest httpServletRequest)
@@ -52,6 +66,13 @@ public class SubmissionController extends BaseController<Submission> {
         return submissionServer.getSubmission(id, httpServletRequest);
     }
 
+    /**
+    * @Description: 修改submission
+    * @Param: [param]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @LoginRequired
     @PutMapping("/submission")
     public ReturnData putSubmission(@RequestBody Map<String, Object> param)
@@ -69,6 +90,13 @@ public class SubmissionController extends BaseController<Submission> {
         return submissionServer.putSubmission(id, can_shared);
     }
 
+    /**
+    * @Description: 获取submission
+    * @Param: [param, httpServletRequest]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @LoginRequired
     @GetMapping("/submissions")
     public ReturnData submissionList(@RequestParam Map<String, String> param, HttpServletRequest httpServletRequest)
@@ -118,6 +146,13 @@ public class SubmissionController extends BaseController<Submission> {
         return new ReturnData(null, new SubmissionListDto(tmp));
     }
 
+    /**
+    * @Description: 判断是否存在提交记录
+    * @Param: [problem_id, httpServletRequest]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @LoginRequired
     @GetMapping("/submission_exists")
     public ReturnData submissionExists(@RequestParam Integer problem_id, HttpServletRequest httpServletRequest)
@@ -125,6 +160,13 @@ public class SubmissionController extends BaseController<Submission> {
         return submissionServer.submissionExists(problem_id, httpServletRequest);
     }
 
+    /**
+    * @Description: 重新评测
+    * @Param: [id, httpServletRequest]
+    * @return: com.yw.ojproject.dto.ReturnData
+    * @Author: YW
+    * @Date: 
+    */
     @SuperadminRequired
     @GetMapping("/admin/submission/rejudge")
     public ReturnData submissionRejudge(@RequestParam String id, HttpServletRequest httpServletRequest)

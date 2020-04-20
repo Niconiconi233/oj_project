@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 公告BO
 *
 * @author: YW
 *

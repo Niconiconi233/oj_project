@@ -1,8 +1,9 @@
 package com.yw.ojproject.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yw.ojproject.bo.CompileSPJBo;
 import com.yw.ojproject.bo.ProblemBo;
-import com.yw.ojproject.bo.ProblemRuleType;
+import com.yw.ojproject.enums.ProblemRuleType;
 import com.yw.ojproject.dao.ProblemDao;
 import com.yw.ojproject.dao.ProblemTagDao;
 import com.yw.ojproject.dto.*;
@@ -81,20 +82,46 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
         }
         //可能存在问题
         String pstr = (String)redisUtils.get(cookie.getValue());
+        if(pstr == null)
+        {
+            return;
+        }
         UserProfile up = JsonUtils.jsonStringToObject(pstr, UserProfile.class);
-        Map<String, VoProblems> acm_status = JsonUtils.jsonStringToObject(up.getAcm_problems_status(), Map.class);
-        Map<String, VoProblems> io_status = JsonUtils.jsonStringToObject(up.getIo_problems_status(), Map.class);
+        Map<String, JSONObject> acm_status = JsonUtils.jsonStringToObject(up.getAcm_problems_status(), Map.class);
+        Map<String, JSONObject> io_status = JsonUtils.jsonStringToObject(up.getIo_problems_status(), Map.class);
 
         for(Problem tmp : param)
         {
+            String id = tmp.getId().toString();
             if(tmp.getRule_type() == ProblemRuleType.ACM)
             {
-                if(acm_status.containsKey(tmp.getId().toString())) {
+                if(acm_status.containsKey(id))
+                {
+                    VoProblems voProblems = JSONObject.toJavaObject(acm_status.get(id), VoProblems.class);
+                    if(voProblems.getStatus() == 0)
+                    {
+                        tmp.setMy_status(0);
+                    }else
+                    {
+                        tmp.setMy_status(1);
+                    }
+                }else
+                {
                     tmp.setMy_status(1);
                 }
             }else
             {
-                if(io_status.containsKey(tmp.getId()))
+                if(io_status.containsKey(id))
+                {
+                    VoProblems voProblems = JSONObject.toJavaObject(io_status.get(id), VoProblems.class);
+                    if(voProblems.getStatus() == 0)
+                    {
+                        tmp.setMy_status(0);
+                    }else
+                    {
+                        tmp.setMy_status(1);
+                    }
+                }else
                 {
                     tmp.setMy_status(1);
                 }
@@ -112,19 +139,46 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
         }
         //可能存在问题
         String pstr = (String)redisUtils.get(cookie.getValue());
+        if(pstr == null)
+        {
+            return;
+        }
         UserProfile up = JsonUtils.jsonStringToObject(pstr, UserProfile.class);
-        Map<String, VoProblems> acm_status = JsonUtils.jsonStringToObject(up.getAcm_problems_status(), Map.class);
-        Map<String, VoProblems> io_status = JsonUtils.jsonStringToObject(up.getIo_problems_status(), Map.class);
+        Map<String, JSONObject> acm_status = JsonUtils.jsonStringToObject(up.getAcm_problems_status(), Map.class);
+        Map<String, JSONObject> io_status = JsonUtils.jsonStringToObject(up.getIo_problems_status(), Map.class);
 
+        String id = param.getId().toString();
         if(param.getRule_type() == ProblemRuleType.ACM)
         {
-            if(acm_status.containsKey(param.getId().toString())) {
-                param.setMy_status(1);
+            if(acm_status.containsKey(id))
+            {
+                VoProblems voProblems = JSONObject.toJavaObject(acm_status.get(id), VoProblems.class);
+                if(voProblems.getStatus() == 0)
+                {
+                    param.setMy_status(0);
+                }else
+                {
+                    param.setMy_status(1);
+                }
             } else
             {
-                if(io_status.containsKey(param.getId().toString())) {
+                param.setMy_status(1);
+            }
+        }else
+        {
+            if(io_status.containsKey(id))
+            {
+                VoProblems voProblems = JSONObject.toJavaObject(io_status.get(id), VoProblems.class);
+                if(voProblems.getStatus() == 0)
+                {
                     param.setMy_status(0);
+                }else
+                {
+                    param.setMy_status(1);
                 }
+            }else
+            {
+                param.setMy_status(1);
             }
         }
     }

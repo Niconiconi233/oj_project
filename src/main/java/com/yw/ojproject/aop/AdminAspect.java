@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
 * @program: ojproject
 *
-* @description: 
+* @description: 管理员判断
 *
 * @author: YW
 *

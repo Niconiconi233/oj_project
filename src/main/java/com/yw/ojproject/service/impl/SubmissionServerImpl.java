@@ -1,6 +1,6 @@
 package com.yw.ojproject.service.impl;
 
-import com.yw.ojproject.bo.JudgeStatus;
+import com.yw.ojproject.enums.JudgeStatus;
 import com.yw.ojproject.dao.ProblemDao;
 import com.yw.ojproject.dao.SubmissionDao;
 import com.yw.ojproject.dto.ReturnData;

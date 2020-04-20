@@ -40,7 +40,7 @@ public class Announcement {
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "CONTENT")
+    @Column(name = "CONTENT", length = 4096)
     private String content;
 
     @Column(name = "CREATE_TIME")
