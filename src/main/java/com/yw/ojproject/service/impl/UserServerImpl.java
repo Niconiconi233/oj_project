@@ -10,6 +10,7 @@ import com.yw.ojproject.entity.UserProfile;
 import com.yw.ojproject.service.UserServer;
 import com.yw.ojproject.utils.CookieUtils;
 import com.yw.ojproject.utils.JsonUtils;
+import com.yw.ojproject.utils.MD5Utils;
 import com.yw.ojproject.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
 * @program: ojproject
@@ -34,6 +33,7 @@ import java.util.concurrent.locks.ReentrantLock;
 **/
 @Slf4j
 @Service
+@Transactional
 public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
 
     UserDao userDao;
@@ -43,8 +43,6 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
 
     @Autowired
     RedisUtils redisUtils;
-
-    private Lock lock = new ReentrantLock();
 
     public UserServerImpl(UserDao userDao)
     {
@@ -64,6 +62,7 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
         {
             return new ReturnData("error", "Email already exists");
         }
+        password = MD5Utils.MD5Pwd(username, password);
         User u = new User(username, password, email);
         UserProfile p = new UserProfile();
         p.setUser(u);
@@ -73,25 +72,22 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
     }
 
     @Override
-    public ReturnData userLogin(String username, String password, HttpServletResponse response) throws InterruptedException {
-        User u = userDao.findByUsernameAndPassword(username, password);
-        if(u == null)
-        {
-            return new ReturnData("error", "Invaild username or password");
-        }
-        if(u.getId_disabled())
-        {
-            return new ReturnData("error", "Your account is been disabled");
-        }
+    public void userLoginInit(String username, HttpServletResponse response) {
+        User u = userDao.findByUsername(username);
         String uuid = UUID.randomUUID().toString().replace("-", "");
         String user_json = JsonUtils.objectToJson(u);
-        redisUtils.set(uuid, user_json, 432000);
-        CookieUtils.set(response, "csrftoken", uuid, 432000);
-        return new ReturnData(null, "Succeeded");
+        redisUtils.set(uuid, user_json, 86400);
+        CookieUtils.set(response, "csrftoken", uuid, 86400);
     }
 
     @Override
-    public ReturnData userLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+    public User findUserByUsername(String username)
+    {
+        return userDao.findByUsername(username);
+    }
+
+    @Override
+    public void userLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
     {
         Cookie cookie = CookieUtils.get(httpServletRequest, "csrftoken");
         redisUtils.del(cookie.getValue());
@@ -100,7 +96,6 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
         redisUtils.del(cookie.getValue());
         CookieUtils.set(httpServletResponse, "_pid", "", 0);
         UserProfileServerImpl.delProfileByPid(cookie.getValue());
-        return new ReturnData(null, "succeeded");
     }
 
     @Override
@@ -189,7 +184,6 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
     }
 
     @Override
-    @Transactional
     public ReturnData delUser(Integer id)
     {
         User u = userDao.findById(id).orElse(null);
@@ -197,7 +191,7 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
         {
             return new ReturnData();
         }
-        userProfileDao.deleteByUser(u);
+        userDao.delete(u);
         return new ReturnData();
     }
 }

@@ -31,4 +31,13 @@ public interface UserDao extends JpaRepository<User, Integer>, JpaSpecificationE
     * @Date:
     */
     Integer countByEmail(String email);
+    
+    /**
+    * @Description: 通过username查找
+    * @Param: [username]
+    * @return: com.yw.ojproject.entity.User
+    * @Author: YW
+    * @Date: 
+    */
+    User findByUsername(String username);
 }

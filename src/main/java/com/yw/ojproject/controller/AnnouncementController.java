@@ -1,11 +1,12 @@
 package com.yw.ojproject.controller;
 
-import com.yw.ojproject.aop.SuperadminRequired;
 import com.yw.ojproject.bo.AnnouncementBo;
 import com.yw.ojproject.dto.AnnouncementListDto;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.entity.Announcement;
 import com.yw.ojproject.service.AnnouncementServer;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,7 +55,7 @@ public class AnnouncementController extends BaseController<Announcement> {
     * @Author: YW
     * @Date: 
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @PostMapping("/admin/announcement")
     public ReturnData adminSetAnnouncement(@RequestBody AnnouncementBo announcementBo, HttpServletRequest httpServletRequest)
     {
@@ -68,7 +69,7 @@ public class AnnouncementController extends BaseController<Announcement> {
     * @Author: YW
     * @Date: 
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @DeleteMapping("/admin/announcement")
     public ReturnData adminDelAnnouncement(@RequestParam Long id)
     {
@@ -82,7 +83,7 @@ public class AnnouncementController extends BaseController<Announcement> {
     * @Author: YW
     * @Date:
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/announcement")
     public ReturnData adminGetAnnouncement(@RequestParam Map<String, String> params)
     {
@@ -106,15 +107,12 @@ public class AnnouncementController extends BaseController<Announcement> {
     * @Author: YW
     * @Date: 
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @PutMapping("/admin/announcement")
     public ReturnData adminPutAnnouncement(@RequestBody AnnouncementBo announcementBo)
     {
         return announcementServer.putAnnouncement(announcementBo);
     }
-
-
-
 }
 
 

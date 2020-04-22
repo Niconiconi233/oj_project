@@ -1,6 +1,5 @@
 package com.yw.ojproject.controller;
 
-import com.yw.ojproject.aop.SuperadminRequired;
 import com.yw.ojproject.bo.HeartBeatBo;
 import com.yw.ojproject.dto.*;
 import com.yw.ojproject.service.ConfigServer;
@@ -8,9 +7,12 @@ import com.yw.ojproject.service.JudgeServerServer;
 import com.yw.ojproject.utils.IpUtils;
 import com.yw.ojproject.utils.JsonUtils;
 import com.yw.ojproject.utils.RequestUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.*;
+import sun.rmi.runtime.Log;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -60,7 +62,7 @@ public class ConfigController {
      * @Author: YW
      * @Date:
      */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/website")
     public ReturnData adminWebsite() throws IOException {
         Object ans = null;
@@ -76,7 +78,7 @@ public class ConfigController {
      * @Author: YW
      * @Date:
      */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @PostMapping("/admin/website")
     public ReturnData adminPostWebsite(@RequestBody WebsiteConfigDto websiteConfigDto) throws IOException {
         JsonUtils.ResolveObjectToJsonFile(websiteConfigDto, environment.getProperty("confPath") + "webconfig.json");
@@ -90,7 +92,7 @@ public class ConfigController {
      * @Author: YW
      * @Date:
      */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/smtp")
     public ReturnData adminGetSMTP() throws IOException {
         Object ans = null;
@@ -99,12 +101,11 @@ public class ConfigController {
         return new ReturnData(null, ans);
     }
 
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @PostMapping("/admin/smtp")
     public ReturnData adminPostSMTP(@RequestBody WebsiteSMTPDto websiteSMTPDto) throws IOException {
         JsonUtils.ResolveObjectToJsonFile(websiteSMTPDto, environment.getProperty("confPath") + "websmtp.json");
         return new ReturnData();
-
     }
 
     /**
@@ -129,6 +130,7 @@ public class ConfigController {
      * @Author: YW
      * @Date:
      */
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/dashboard_info")
     public ReturnData dashBoardInfo() {
         DashBoardInfoDto info = new DashBoardInfoDto();
@@ -144,7 +146,7 @@ public class ConfigController {
      * @Author: YW
      * @Date:
      */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/versions")
     public ReturnData versions() {
         return new ReturnData(null, new WebSiteVersionDto());
@@ -158,7 +160,7 @@ public class ConfigController {
      * @Author: YW
      * @Date:
      */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/prune_test_case")
     public ReturnData adminGetTestCase() {
         return configServer.getAllTestCase();
@@ -171,7 +173,7 @@ public class ConfigController {
      * @Author: YW
      * @Date:
      */
-    @SuperadminRequired
+    @RequiresRoles("superadmin")
     @DeleteMapping("/admin/prune_test_case")
     public ReturnData adminDelTestCase(@RequestParam String id) {
         return configServer.delTestCase(id);
@@ -202,7 +204,7 @@ public class ConfigController {
      * @Author: YW
      * @Date:
      */
-    @SuperadminRequired
+    @RequiresRoles(value = {"superadmin"})
     @GetMapping("/admin/judge_server")
     public ReturnData adminGetServer() {
         return judgeServerServer.getJudgeServer();
@@ -215,7 +217,7 @@ public class ConfigController {
     * @Author: YW
     * @Date:
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"superadmin"})
     @DeleteMapping("/admin/judge_server")
     public ReturnData adminDelServer(@RequestParam String hostname) throws InterruptedException {
         return judgeServerServer.delJudgeServer(hostname);
@@ -228,7 +230,7 @@ public class ConfigController {
     * @Author: YW
     * @Date:
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"superadmin"})
     @PutMapping("/admin/judge_server")
     public ReturnData adminPutServer(@RequestBody Map<String, String> params)
     {

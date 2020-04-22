@@ -1,11 +1,11 @@
 package com.yw.ojproject.controller;
 
-import com.yw.ojproject.aop.LoginRequired;
 import com.yw.ojproject.bo.UserProfileBo;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.UserRankListDto;
 import com.yw.ojproject.entity.UserProfile;
 import com.yw.ojproject.service.UserProfileServer;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,7 +70,7 @@ public class UserProfileController extends BaseController<UserProfile> {
     * @Author: YW
     * @Date:
     */
-    @LoginRequired
+    @RequiresPermissions("user:norm")
     @GetMapping("/profile")
     public ReturnData userProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws InterruptedException {
         return userProfileService.userProfile(httpServletRequest, httpServletResponse);
@@ -83,13 +83,11 @@ public class UserProfileController extends BaseController<UserProfile> {
     * @Author: YW
     * @Date:
     */
-    @LoginRequired
+    @RequiresPermissions("user:norm")
     @PutMapping("/profile")
     public ReturnData modUserProfile(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody UserProfileBo userProfileBo) throws InterruptedException {
         return userProfileService.modUserProfile(httpServletRequest, httpServletResponse, userProfileBo);
     }
-
-
 }
 
 

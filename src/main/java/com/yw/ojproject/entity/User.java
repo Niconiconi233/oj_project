@@ -89,7 +89,12 @@ public class User {
     private String open_api_key = "";
 
     @Column(name = "IS_DISABLED")
-    private Boolean id_disabled = false;
+    private Boolean is_disabled = false;
+
+    @Transient
+    public Boolean isDisabled(){
+        return is_disabled;
+    }
 
     @Transient
     public Boolean isAdmin()
@@ -143,7 +148,7 @@ public class User {
         this.real_name = userTotalDto.getReal_name();
         this.two_factor_auth = userTotalDto.getTwo_factor_auth();
         this.open_api = userTotalDto.getOpen_api();
-        this.id_disabled = userTotalDto.getIs_disabled();
+        this.is_disabled = userTotalDto.getIs_disabled();
         if(userTotalDto.getPassword().compareTo("") != 0) {
             this.password = userTotalDto.getPassword();
         }

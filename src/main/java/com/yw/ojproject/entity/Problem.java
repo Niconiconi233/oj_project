@@ -71,25 +71,22 @@ public class Problem {
     @Column(name = "ID", unique = true, nullable = false, length = 32)
     private Integer id;
 
-    //@Column(name = "contest")
-    //private Contest contest;
-
     @Column(name = "IS_PUBLIC")
     private Boolean is_public = true;
 
     @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "DESCRIPTION", length = 4096)
+    @Column(name = "DESCRIPTION", length = 512)
     private String description;
 
-    @Column(name = "INPUT_DESCRIPTION", length = 2048)
+    @Column(name = "INPUT_DESCRIPTION", length = 512)
     private String input_description;
 
-    @Column(name = "OUTPUT_DESCRIPTION", length = 2048)
+    @Column(name = "OUTPUT_DESCRIPTION", length = 512)
     private String output_description;
 
-    @Column(name = "SAMPLES", length = 4096)
+    @Column(name = "SAMPLES", length = 2048)
     private String samples;
 
     @Column(name = "TEST_CASE_ID")
@@ -98,13 +95,13 @@ public class Problem {
     @Column(name = "TEST_CASE_SCORE", length = 2048)
     private String test_case_score;
 
-    @Column(name = "HINT", length = 2048)
+    @Column(name = "HINT", length = 512)
     private String hint;
 
     @Column(name = "LANGUAGES")
     private String languages;
 
-    @Column(name = "TEMPLATE", length = 1024)
+    @Column(name = "TEMPLATE", length = 255)
     private String templates;
 
     @Column(name = "CREATE_TIME")
@@ -133,7 +130,7 @@ public class Problem {
     @Column(name = "SPJ_LANGUAGE")
     private String spj_language;
 
-    @Column(name = "SPJ_CODE", length = 4096)
+    @Column(name = "SPJ_CODE", length = 2048)
     private String spj_code;
 
     @Column(name = "SPJ_VERSION")
@@ -226,10 +223,6 @@ public class Problem {
         this.total_score = adminProblemDto.getTotal_score();
         this.test_case_score = JsonUtils.listToJsonString(adminProblemDto.getTest_case_score());
         this.source = adminProblemDto.getSource();
-        //this.total_score = adminProblemDto.getTotal_score();
-        //this.submission_number = adminProblemDto.getSubmission_number();
-        //this.accepted_number = adminProblemDto.getAccepted_number();
-        //this.statistic_info = JsonUtils.objectToJson(adminProblemDto.getStatistic_info());
     }
 
 }
