@@ -1,6 +1,8 @@
 package com.yw.ojproject.utils;
 
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -40,5 +42,18 @@ public class RandUtils {
             sb.append(str.charAt(number));
         }
         return sb.toString();
+    }
+
+
+    public static List<CVSUtils.CSVEntity> makeRandomUser(String pre, String suff, Integer from, Integer to, Integer pwdl)
+    {
+        List<CVSUtils.CSVEntity> result = new LinkedList<>();
+        int idx = 0;
+        for(int i = from; i <= to; ++i)
+        {
+            result.add(idx, new CVSUtils.CSVEntity(pre + i + suff, getRandomString(pwdl)));
+            ++idx;
+        }
+        return result;
     }
 }
