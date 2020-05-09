@@ -11,6 +11,7 @@ import com.yw.ojproject.utils.CookieUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
@@ -86,7 +87,7 @@ public class UserController extends BaseController<User> {
         if(subject.isAuthenticated())
         {
             userServer.userLoginInit(params.get("username"), httpServletResponse);
-            return new ReturnData(null, "Succeeded");
+            return new ReturnData(null, subject.getSession().getId());
         }else
         {
             token.clear();
@@ -101,7 +102,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date:
     */
-    @RequiresPermissions("user:norm")
+    @RequiresPermissions(value = {"user:norm", "user:admin", "user:superadmin"}, logical = Logical.OR)
     @GetMapping("/logout")
     public ReturnData userLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
     {
@@ -131,7 +132,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date:
     */
-    @RequiresPermissions("user:norm")
+    @RequiresPermissions(value = {"user:norm", "user:admin", "user:superadmin"}, logical = Logical.OR)
     @PostMapping("/change_email")
     public ReturnData changeEmail(@RequestBody Map<String, String> args, HttpServletRequest httpServletRequest)
     {
@@ -145,7 +146,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date:
     */
-    @RequiresPermissions("user:norm")
+    @RequiresPermissions(value = {"user:norm", "user:admin", "user:superadmin"}, logical = Logical.OR)
     @PostMapping("/change_password")
     public ReturnData changePassword(@RequestBody Map<String, String> args, HttpServletRequest httpServletRequest)
     {
@@ -159,7 +160,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date:
     */
-    @RequiresPermissions("user:norm")
+    @RequiresPermissions(value = {"user:norm", "user:admin", "user:superadmin"}, logical = Logical.OR)
     @GetMapping("/sessions")
     public ReturnData session(HttpServletRequest httpServletRequest)
     {
@@ -203,7 +204,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date: 
     */
-    @RequiresRoles("superadmin")
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/user")
     public ReturnData adminGetUser(@RequestParam Map<String, String> params)
     {
@@ -242,7 +243,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date: 
     */
-    @RequiresRoles("superadmin")
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @PutMapping("/admin/user")
     public ReturnData adminPutUser(@RequestBody UserTotalDto userTotalDto)
     {

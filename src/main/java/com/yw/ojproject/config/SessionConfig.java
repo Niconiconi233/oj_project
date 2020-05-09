@@ -19,17 +19,23 @@ import java.io.Serializable;
  * @create: 2020-04-22 00:06
  **/
 public class SessionConfig extends DefaultWebSessionManager {
+
+    private static final String AUTH_TOKEN = "authToken";
+    private static final String REFERENCED_SESSION_ID_SOURCE = "Stateless request";
+
     public SessionConfig() {
         super();
+        //设置有效时间24小时
+        setGlobalSessionTimeout(MILLIS_PER_HOUR * 24);
     }
 
     @Override
     protected Serializable getSessionId(ServletRequest request, ServletResponse response)
     {
-        String id  = WebUtils.toHttp(request).getHeader("token");
+        String id  = WebUtils.toHttp(request).getHeader(AUTH_TOKEN);
         if(!StringUtils.isEmpty(id) && !"null".equals(id))
         {
-            request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, "Stateless request");
+            request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, REFERENCED_SESSION_ID_SOURCE);
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
             return id;

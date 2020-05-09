@@ -95,6 +95,7 @@ public class UserServerImpl extends BaseServerImpl<User> implements UserServer {
         cookie = CookieUtils.get(httpServletRequest, "_pid");
         redisUtils.del(cookie.getValue());
         CookieUtils.set(httpServletResponse, "_pid", "", 0);
+        CookieUtils.set(httpServletResponse, "authToken", "", 0);
         UserProfileServerImpl.delProfileByPid(cookie.getValue());
     }
 

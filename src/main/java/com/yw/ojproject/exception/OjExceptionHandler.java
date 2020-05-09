@@ -5,6 +5,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,14 @@ public class OjExceptionHandler {
     {
         logger.info("用户名或密码不正确");
         return new ReturnData("error", "用户名或密码不正确");
+    }
+
+    @ExceptionHandler(value = UnauthenticatedException.class)
+    @ResponseBody
+    public ReturnData handleUnauthenticated(UnauthenticatedException e)
+    {
+        logger.info("未登录访问需要登录的接口");
+        return new ReturnData(null, null);
     }
 
     @ExceptionHandler(value = Exception.class)
