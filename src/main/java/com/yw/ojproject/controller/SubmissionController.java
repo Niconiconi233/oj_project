@@ -98,7 +98,7 @@ public class SubmissionController extends BaseController<Submission> {
     * @Author: YW
     * @Date: 
     */
-    @RequiresPermissions("user:norm")
+    //@RequiresPermissions("user:norm")
     @GetMapping("/submissions")
     public ReturnData submissionList(@RequestParam Map<String, String> param, HttpServletRequest httpServletRequest)
     {

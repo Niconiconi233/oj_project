@@ -31,10 +31,10 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-    String host = "127.0.0.1";
-    int port = 6380;
-    int timeout = 300;
-    String password = "10086";
+    static String host = "oj-redis";
+    static int port = 6379;
+    static int timeout = 300;
+    static String password = "10086";
 
     @Bean(name = "shiroFilter")
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
