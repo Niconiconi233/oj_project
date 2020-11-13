@@ -1,11 +1,12 @@
 package com.yw.ojproject.controller;
 
-import com.yw.ojproject.aop.LoginRequired;
-import com.yw.ojproject.aop.SuperadminRequired;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.SubmissionListDto;
 import com.yw.ojproject.entity.Submission;
 import com.yw.ojproject.service.SubmissionServer;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +43,7 @@ public class SubmissionController extends BaseController<Submission> {
     * @Author: YW
     * @Date: 
     */
-    @LoginRequired
+    @RequiresPermissions("user:norm")
     @PostMapping("/submission")
     public ReturnData submission(@RequestBody Map<String, Object> param, HttpServletRequest httpServletRequest) throws UnsupportedEncodingException {
         return submissionServer.postSubmission(param, httpServletRequest);
@@ -55,7 +56,7 @@ public class SubmissionController extends BaseController<Submission> {
     * @Author: YW
     * @Date: 
     */
-    @LoginRequired
+    @RequiresPermissions("user:norm")
     @GetMapping("/submission")
     public ReturnData getSubmission(@RequestParam String id, HttpServletRequest httpServletRequest)
     {
@@ -73,7 +74,7 @@ public class SubmissionController extends BaseController<Submission> {
     * @Author: YW
     * @Date: 
     */
-    @LoginRequired
+    @RequiresPermissions("user:norm")
     @PutMapping("/submission")
     public ReturnData putSubmission(@RequestBody Map<String, Object> param)
     {
@@ -97,7 +98,7 @@ public class SubmissionController extends BaseController<Submission> {
     * @Author: YW
     * @Date: 
     */
-    @LoginRequired
+    //@RequiresPermissions("user:norm")
     @GetMapping("/submissions")
     public ReturnData submissionList(@RequestParam Map<String, String> param, HttpServletRequest httpServletRequest)
     {
@@ -153,7 +154,7 @@ public class SubmissionController extends BaseController<Submission> {
     * @Author: YW
     * @Date: 
     */
-    @LoginRequired
+    @RequiresPermissions("user:norm")
     @GetMapping("/submission_exists")
     public ReturnData submissionExists(@RequestParam Integer problem_id, HttpServletRequest httpServletRequest)
     {
@@ -167,7 +168,7 @@ public class SubmissionController extends BaseController<Submission> {
     * @Author: YW
     * @Date: 
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/submission/rejudge")
     public ReturnData submissionRejudge(@RequestParam String id, HttpServletRequest httpServletRequest)
     {

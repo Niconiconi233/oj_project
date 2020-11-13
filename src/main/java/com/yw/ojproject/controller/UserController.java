@@ -1,8 +1,6 @@
 package com.yw.ojproject.controller;
 
 import com.google.code.kaptcha.Producer;
-import com.yw.ojproject.aop.LoginRequired;
-import com.yw.ojproject.aop.SuperadminRequired;
 import com.yw.ojproject.dto.ReturnData;
 import com.yw.ojproject.dto.SessionDto;
 import com.yw.ojproject.dto.UserListDto;
@@ -10,6 +8,13 @@ import com.yw.ojproject.dto.UserTotalDto;
 import com.yw.ojproject.entity.User;
 import com.yw.ojproject.service.UserServer;
 import com.yw.ojproject.utils.CookieUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -69,8 +74,25 @@ public class UserController extends BaseController<User> {
     * @Date:
     */
     @PostMapping("/login")
-    public ReturnData userLogin(@RequestBody Map<String, String> args, HttpServletResponse httpResponse) throws InterruptedException {
-        return userServer.userLogin(args.get("username"), args.get("password"), httpResponse);
+    public ReturnData userLogin(@RequestBody Map<String, String> params, HttpServletResponse httpServletResponse)
+    {
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(params.get("username"), params.get("password"));
+        try{
+            subject.login(token);
+        }catch (AccountException e)
+        {
+            throw e;
+        }
+        if(subject.isAuthenticated())
+        {
+            userServer.userLoginInit(params.get("username"), httpServletResponse);
+            return new ReturnData(null, subject.getSession().getId());
+        }else
+        {
+            token.clear();
+            return new ReturnData("error", "登录失败");
+        }
     }
 
     /**
@@ -80,11 +102,14 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date:
     */
-    @LoginRequired
+    @RequiresPermissions(value = {"user:norm", "user:admin", "user:superadmin"}, logical = Logical.OR)
     @GetMapping("/logout")
     public ReturnData userLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
     {
-        return userServer.userLogout(httpServletRequest, httpServletResponse);
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        userServer.userLogout(httpServletRequest, httpServletResponse);
+        return new ReturnData(null, "Succeeded");
     }
 
     /**
@@ -107,7 +132,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date:
     */
-    @LoginRequired
+    @RequiresPermissions(value = {"user:norm", "user:admin", "user:superadmin"}, logical = Logical.OR)
     @PostMapping("/change_email")
     public ReturnData changeEmail(@RequestBody Map<String, String> args, HttpServletRequest httpServletRequest)
     {
@@ -121,7 +146,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date:
     */
-    @LoginRequired
+    @RequiresPermissions(value = {"user:norm", "user:admin", "user:superadmin"}, logical = Logical.OR)
     @PostMapping("/change_password")
     public ReturnData changePassword(@RequestBody Map<String, String> args, HttpServletRequest httpServletRequest)
     {
@@ -135,7 +160,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date:
     */
-    @LoginRequired
+    @RequiresPermissions(value = {"user:norm", "user:admin", "user:superadmin"}, logical = Logical.OR)
     @GetMapping("/sessions")
     public ReturnData session(HttpServletRequest httpServletRequest)
     {
@@ -161,7 +186,6 @@ public class UserController extends BaseController<User> {
     @GetMapping("/captcha")
     public ReturnData captcha() throws IOException {
         String captext = captchaProducer.createText();
-        System.out.println(captext);
         BufferedImage bi = captchaProducer.createImage(captext);
         BASE64Encoder encoder = new BASE64Encoder();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -180,7 +204,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date: 
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/user")
     public ReturnData adminGetUser(@RequestParam Map<String, String> params)
     {
@@ -219,7 +243,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date: 
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @PutMapping("/admin/user")
     public ReturnData adminPutUser(@RequestBody UserTotalDto userTotalDto)
     {
@@ -233,7 +257,7 @@ public class UserController extends BaseController<User> {
     * @Author: YW
     * @Date: 
     */
-    @SuperadminRequired
+    @RequiresRoles("superadmin")
     @DeleteMapping("/admin/user")
     public ReturnData adminDelUser(@RequestParam Integer id)
     {

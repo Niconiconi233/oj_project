@@ -1,7 +1,5 @@
 package com.yw.ojproject.controller;
 
-import com.yw.ojproject.aop.AdminRequired;
-import com.yw.ojproject.aop.SuperadminRequired;
 import com.yw.ojproject.bo.CompileSPJBo;
 import com.yw.ojproject.bo.ProblemBo;
 import com.yw.ojproject.dto.AdminProblemDto;
@@ -11,6 +9,8 @@ import com.yw.ojproject.entity.Problem;
 import com.yw.ojproject.entity.ProblemTag;
 import com.yw.ojproject.service.ProblemServer;
 import com.yw.ojproject.service.ProblemTagServer;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -128,7 +128,7 @@ public class ProblemController extends BaseController<Problem> {
     * @Author: YW
     * @Date:
     */
-    @SuperadminRequired
+    @RequiresRoles(value = {"admin", "superadmin"}, logical = Logical.OR)
     @GetMapping("/admin/problem")
     public ReturnData adminGetProblems(@RequestParam Map<String, String> params)
     {
@@ -158,7 +158,7 @@ public class ProblemController extends BaseController<Problem> {
     * @Author: YW
     * @Date:
     */
-    @SuperadminRequired
+    @RequiresRoles("superadmin")
     @PutMapping("/admin/problem")
     public ReturnData adminPutProblems(@RequestBody AdminProblemDto problem)
     {
@@ -172,7 +172,7 @@ public class ProblemController extends BaseController<Problem> {
     * @Author: YW
     * @Date:
     */
-    @SuperadminRequired
+    @RequiresRoles("superadmin")
     @PostMapping("/admin/test_case")
     public ReturnData uploadTestCase(@RequestParam Boolean spj, @RequestParam("file") MultipartFile file) throws IOException {
         if(file.isEmpty())
@@ -189,7 +189,7 @@ public class ProblemController extends BaseController<Problem> {
     * @Author: YW
     * @Date:
     */
-    @SuperadminRequired
+    @RequiresRoles("superadmin")
     @PostMapping("/admin/problem")
     public ReturnData setProblems(@RequestBody ProblemBo b, HttpServletRequest httpServletRequest)
     {
@@ -204,7 +204,7 @@ public class ProblemController extends BaseController<Problem> {
     * @Author: YW
     * @Date: 
     */
-    @SuperadminRequired
+    @RequiresRoles("superadmin")
     @DeleteMapping("/admin/problem")
     public ReturnData delProblems(@RequestParam Integer id)
     {
@@ -218,7 +218,7 @@ public class ProblemController extends BaseController<Problem> {
     * @Author: YW
     * @Date: 
     */
-    @AdminRequired
+    @RequiresRoles("superadmin")
     @PostMapping("/admin/compile_spj")
     public ReturnData adminCompileSPJ(@RequestBody CompileSPJBo compileSPJBo)
     {

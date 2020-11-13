@@ -222,5 +222,4 @@ public class JudgeServerServerImpl implements JudgeServerServer {
             lock.unlock();
         }
     }
-
 }

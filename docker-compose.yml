@@ -1,0 +1,79 @@
+version: "3"
+services:
+  oj-mysql:
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+    image: mysql:latest
+    container_name: oj-mysql
+    restart: always
+    volumes:
+      - /home/project/ojPath/config/mysql/db:/var/lib/mysql
+      - /home/project/ojPath/config/mysql/conf/my.cnf:/etc/my.cnf
+    ports:
+      - "3309:3306"
+    networks:
+      - my-bridge
+
+  oj-redis:
+    image: redis:4.0-alpine
+    container_name: oj-redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: always
+    volumes:
+      - /home/project/ojPath/config/redis/data:/data
+      - /home/project/ojPath/config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - my-bridge
+
+  oj-judge:
+    image: registry.cn-hongkong.aliyuncs.com/ojserver/ojserver:v5
+    container_name: oj-judge
+    restart: always
+    cap_drop:
+      - SETPCAP
+      - MKNOD
+      - NET_BIND_SERVICE
+      - SYS_CHROOT
+      - SETFCAP
+      - FSETID
+    tmpfs:
+      - /tmp
+    volumes:
+      - /home/project/ojPath/test_case:/test_case:ro
+      - /home/project/ojPath/log:/log
+      - /home/project/ojPath/run:/judger
+    environment:
+      - SERVICE_URL=http://oj-judge:8080
+      - BACKEND_URL=http://oj-backend:8000/api/judge_server_heartbeat/
+      - TOKEN=123456
+    external_links:
+      - oj-backend
+    networks:
+      - my-bridge
+    ports:
+      - 127.0.0.1:8080:8080
+      
+  oj-backend:
+    image: registry.cn-hongkong.aliyuncs.com/ojserver/oj-backend:v2
+    container_name: oj-backend
+    restart: always
+    depends_on:
+      - oj-redis
+      - oj-mysql
+      - oj-judge
+    volumes:
+      - /home/project/ojPath/test_case:/test_case
+      - /home/project/ojPath/zip_temp:/zip_temp
+      - /home/project/ojPath/webconf:/webconf
+    external_links:
+      - oj-mysql
+      - oj-redis
+      - oj-judge
+    networks:
+      - my-bridge
+    ports:
+      - "0.0.0.0:8000:8000"
+      
+networks:
+  my-bridge:
+    driver: bridge

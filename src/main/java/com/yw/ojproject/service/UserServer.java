@@ -24,7 +24,16 @@ public interface UserServer extends BaseServer<User> {
     * @Author: YW
     * @Date:
     */
-    public ReturnData userLogin(String username, String password, HttpServletResponse httpResponse) throws InterruptedException;
+    public void userLoginInit(String username, HttpServletResponse httpServletResponse);
+
+    /**
+    * @Description: 通过username查找user
+    * @Param: [username]
+    * @return: com.yw.ojproject.entity.User
+    * @Author: YW
+    * @Date:
+    */
+    public User findUserByUsername(String username);
 
     /**
     * @Description: 登出
@@ -33,7 +42,7 @@ public interface UserServer extends BaseServer<User> {
     * @Author: YW
     * @Date:
     */
-    public ReturnData userLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    public void userLogout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
 
     /**
     * @Description: 检查用户名邮箱

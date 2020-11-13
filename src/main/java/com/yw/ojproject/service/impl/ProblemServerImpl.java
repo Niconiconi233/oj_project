@@ -68,7 +68,7 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
     public ReturnData pickOne()
     {
         List<Problem> l = problemDao.findByVisibleTrue();
-        int ran = (int) Math.random()*(l.size());
+        int ran = (int)(Math.random() * (l.size() + 1));
         return new ReturnData(null, l.get(ran).getId());
     }
 
@@ -84,6 +84,7 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
         String pstr = (String)redisUtils.get(cookie.getValue());
         if(pstr == null)
         {
+            //FIXME 从数据库中获取
             return;
         }
         UserProfile up = JsonUtils.jsonStringToObject(pstr, UserProfile.class);
@@ -485,6 +486,7 @@ public class ProblemServerImpl extends BaseServerImpl<Problem> implements Proble
     @Transactional
     public ReturnData delProblems(Integer id)
     {
+        //FIXME 同时删除测试用例
         problemDao.deleteById(id);
         return new ReturnData();
     }

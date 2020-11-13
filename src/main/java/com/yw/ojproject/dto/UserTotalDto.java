@@ -34,7 +34,7 @@ public class UserTotalDto {
         this.last_login = new Date();
         this.two_factor_auth = user.getTwo_factor_auth();
         this.open_api = user.getOpen_api();
-        this.is_disabled = user.getId_disabled();
+        this.is_disabled = user.getIs_disabled();
     }
     private Integer id;
     private String username;

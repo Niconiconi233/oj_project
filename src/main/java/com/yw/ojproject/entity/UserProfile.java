@@ -4,6 +4,8 @@ import com.yw.ojproject.bo.UserProfileBo;
 import com.yw.ojproject.dto.VoProblems;
 import com.yw.ojproject.utils.JsonUtils;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -27,7 +29,8 @@ public class UserProfile {
     @Column(name = "ID", unique = true, nullable = false, length = 32)
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "USER_ID", referencedColumnName = "ID")
     private User user;
 

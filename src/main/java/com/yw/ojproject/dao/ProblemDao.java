@@ -2,6 +2,7 @@ package com.yw.ojproject.dao;
 
 import com.yw.ojproject.entity.Problem;
 import com.yw.ojproject.entity.ProblemTag;
+import com.yw.ojproject.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
